@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
+import de.caritas.cob.statisticsservice.api.authorization.Authority.AuthorityValue;
 import org.junit.Test;
 
 public class AuthorityTest {
@@ -14,7 +15,7 @@ public class AuthorityTest {
   public void getAuthority_Should_returnExpectedAuthority_When_authorityIsConsultant() {
     String authority = CONSULTANT.getAuthority();
 
-    assertThat(authority, is("CONSULTANT_DEFAULT"));
+    assertThat(authority, is(AuthorityValue.CONSULTANT_DEFAULT));
   }
 
   @Test

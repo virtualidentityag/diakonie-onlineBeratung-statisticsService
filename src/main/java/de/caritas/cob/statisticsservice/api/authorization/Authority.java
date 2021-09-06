@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  */
 public enum Authority {
 
-  CONSULTANT("consultant", "CONSULTANT_DEFAULT");
+  CONSULTANT("consultant", AuthorityValue.CONSULTANT_DEFAULT);
 
   private final String roleName;
   private final String authorityName;
@@ -39,6 +39,15 @@ public enum Authority {
    **/
   public String getAuthority() {
     return this.authorityName;
+  }
+
+  public static class AuthorityValue {
+
+    private AuthorityValue() {
+    }
+
+    public static final String PREFIX = "AUTHORIZATION_";
+    public static final String CONSULTANT_DEFAULT = PREFIX + "CONSULTANT_DEFAULT";
   }
 
 }

@@ -1,5 +1,7 @@
 package de.caritas.cob.statisticsservice.api.controller;
 
+import static de.caritas.cob.statisticsservice.api.testhelper.PathConstants.PATH_GET_CONSULTANT_STATISTICS;
+import static de.caritas.cob.statisticsservice.api.testhelper.PathConstants.PATH_GET_CONSULTANT_STATISTICS_CSV;
 import static org.powermock.reflect.Whitebox.setInternalState;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,10 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(StatisticsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class StatisticsControllerIT {
-
-  static final String ROOT_PATH = "/statistics";
-  static final String PATH_GET_CONSULTANT_STATISTICS = ROOT_PATH + "/consultant";
-  static final String PATH_GET_CONSULTANT_STATISTICS_CSV = ROOT_PATH + "/consultant";
 
   @Autowired
   private MockMvc mvc;
