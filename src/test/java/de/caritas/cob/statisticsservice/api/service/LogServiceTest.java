@@ -78,7 +78,7 @@ public class LogServiceTest {
 
     LogService.logWarning(HttpStatus.MULTI_STATUS, exception);
     verify(logger, atLeastOnce()).warn(eq("StatisticsService API: {}: {}"),
-        eq("Multi-Status"), anyString());
+        eq("Multi-EventStatus"), anyString());
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
