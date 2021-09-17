@@ -23,6 +23,7 @@ import org.springframework.amqp.rabbit.retry.RepublishMessageRecoverer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
@@ -40,23 +41,25 @@ public class RabbitMqConfig {
   public static final String QUEUE_NAME_CREATE_MESSAGE = QUEUE_PREFIX + EventType.CREATE_MESSAGE;
   private static final String QUEUE_NAME_DEAD_LETTER_QUEUE = QUEUE_PREFIX + "dead_letter_queue";
   private static final String DEAD_LETTER_ROUTING_KEY = "DEAD_LETTER";
-
+  private static final String X_DEAD_LETTER_EXCHANGE_HEADER = "x-dead-letter-exchange";
+  private static final String X_DEAD_LETTER_ROUTING_KEY_HEADER = "x-dead-letter-routing-key";
   private final @NonNull CachingConnectionFactory connectionFactory;
+
+  @Value("${spring.rabbitmq.listener.simple.retry.max-attempts}")
+  private int retryMaxAttempts;
+  @Value("${spring.rabbitmq.listener.simple.retry.initial-interval}")
+  private int retryInitialInterval;
+  @Value("${spring.rabbitmq.listener.simple.retry.max-interval}")
+  private int retryMaxInterval;
+  @Value("${spring.rabbitmq.listener.simple.retry.multiplier}")
+  private int retryMultiplier;
 
   @Bean
   public Declarables topicBindings() {
 
-    Queue deadLetterQueue = QueueBuilder.durable(QUEUE_NAME_DEAD_LETTER_QUEUE).build();
-    Queue assignSessionStatisticsEventQueue =
-        QueueBuilder.durable(QUEUE_NAME_ASSIGN_SESSION)
-            .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE_NAME)
-            .withArgument("x-dead-letter-routing-key", DEAD_LETTER_ROUTING_KEY)
-            .build();
-    Queue createMessageStatisticsEventQueue =
-        QueueBuilder.durable(QUEUE_NAME_CREATE_MESSAGE)
-            .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE_NAME)
-            .withArgument("x-dead-letter-routing-key", DEAD_LETTER_ROUTING_KEY)
-            .build();
+    Queue deadLetterQueue = buildDeadLetterQueue();
+    Queue assignSessionStatisticsEventQueue = buildQueue(QUEUE_NAME_ASSIGN_SESSION);
+    Queue createMessageStatisticsEventQueue = buildQueue(QUEUE_NAME_CREATE_MESSAGE);
 
     DirectExchange deadLetterExchange = new DirectExchange(DEAD_LETTER_EXCHANGE_NAME, true, false);
     TopicExchange topicExchange = new TopicExchange(STATISTICS_EXCHANGE_NAME, true, false);
@@ -65,9 +68,7 @@ public class RabbitMqConfig {
         deadLetterQueue,
         deadLetterExchange,
         topicExchange,
-        BindingBuilder.bind(deadLetterQueue)
-            .to(deadLetterExchange)
-            .with(DEAD_LETTER_ROUTING_KEY),
+        BindingBuilder.bind(deadLetterQueue).to(deadLetterExchange).with(DEAD_LETTER_ROUTING_KEY),
         assignSessionStatisticsEventQueue,
         BindingBuilder.bind(assignSessionStatisticsEventQueue)
             .to(topicExchange)
@@ -76,6 +77,17 @@ public class RabbitMqConfig {
         BindingBuilder.bind(createMessageStatisticsEventQueue)
             .to(topicExchange)
             .with(EventType.CREATE_MESSAGE));
+  }
+
+  private Queue buildQueue(String queueName) {
+    return QueueBuilder.durable(queueName)
+        .withArgument(X_DEAD_LETTER_EXCHANGE_HEADER, DEAD_LETTER_EXCHANGE_NAME)
+        .withArgument(X_DEAD_LETTER_ROUTING_KEY_HEADER, DEAD_LETTER_ROUTING_KEY)
+        .build();
+  }
+
+  private Queue buildDeadLetterQueue() {
+    return QueueBuilder.durable(QUEUE_NAME_DEAD_LETTER_QUEUE).build();
   }
 
   @Bean
@@ -96,13 +108,16 @@ public class RabbitMqConfig {
 
   @Bean
   RetryOperationsInterceptor statelessRetryOperationsInterceptor() {
-    RepublishMessageRecoverer recoverer = new RepublishMessageRecoverer(
-        amqpTemplate(connectionFactory),
-        DEAD_LETTER_EXCHANGE_NAME,
-        DEAD_LETTER_ROUTING_KEY);
+    RepublishMessageRecoverer recoverer =
+        new RepublishMessageRecoverer(
+            amqpTemplate(connectionFactory), DEAD_LETTER_EXCHANGE_NAME, DEAD_LETTER_ROUTING_KEY);
     recoverer.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
     return RetryInterceptorBuilder.stateless()
-        .maxAttempts(3)
+        .maxAttempts(retryMaxAttempts)
+        .backOffOptions(
+            retryInitialInterval,
+            retryMultiplier,
+            retryMaxInterval)
         .recoverer(recoverer)
         .build();
   }
@@ -113,7 +128,8 @@ public class RabbitMqConfig {
   }
 
   @Bean
-  SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(CachingConnectionFactory connectionFactory) {
+  SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(
+      CachingConnectionFactory connectionFactory) {
     SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
     factory.setConnectionFactory(connectionFactory);
     factory.setAdviceChain(statelessRetryOperationsInterceptor());
