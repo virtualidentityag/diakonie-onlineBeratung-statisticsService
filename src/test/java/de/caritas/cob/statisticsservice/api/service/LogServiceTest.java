@@ -62,7 +62,7 @@ public class LogServiceTest {
   public void logInfo_Should_LogInfoMessage() {
 
     LogService.logInfo("info message");
-    verify(logger, atLeastOnce()).info(eq("info message"));
+    verify(logger, atLeastOnce()).info("info message");
   }
 
   @Test
@@ -78,7 +78,7 @@ public class LogServiceTest {
 
     LogService.logWarning(HttpStatus.MULTI_STATUS, exception);
     verify(logger, atLeastOnce()).warn(eq("StatisticsService API: {}: {}"),
-        eq("Multi-EventStatus"), anyString());
+        eq("Multi-Status"), anyString());
     verify(exception, atLeastOnce()).printStackTrace(any(PrintWriter.class));
   }
 
