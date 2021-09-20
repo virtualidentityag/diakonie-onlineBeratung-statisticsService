@@ -22,7 +22,5 @@ public class StatisticsEvent {
   private Agency agency;
   private Diocese diocese;
   private Object metaData;
-  private EventStatus eventStatus;
-
 
 }

@@ -48,6 +48,12 @@ components:
         - "ASSIGN_SESSION"
         - "CREATE_MESSAGE"
 
+    UserRole:
+      type: string
+      enum:
+        - "CONSULTANT"
+        - "ASKER"
+
     StatisticsEventMessage:
       type: object
       required:

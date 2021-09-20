@@ -57,12 +57,12 @@ public class RabbitMqConfig {
   @Bean
   public Declarables topicBindings() {
 
-    Queue deadLetterQueue = buildDeadLetterQueue();
-    Queue assignSessionStatisticsEventQueue = buildQueue(QUEUE_NAME_ASSIGN_SESSION);
-    Queue createMessageStatisticsEventQueue = buildQueue(QUEUE_NAME_CREATE_MESSAGE);
+    var deadLetterQueue = buildDeadLetterQueue();
+    var assignSessionStatisticsEventQueue = buildQueue(QUEUE_NAME_ASSIGN_SESSION);
+    var createMessageStatisticsEventQueue = buildQueue(QUEUE_NAME_CREATE_MESSAGE);
 
-    DirectExchange deadLetterExchange = new DirectExchange(DEAD_LETTER_EXCHANGE_NAME, true, false);
-    TopicExchange topicExchange = new TopicExchange(STATISTICS_EXCHANGE_NAME, true, false);
+    var deadLetterExchange = new DirectExchange(DEAD_LETTER_EXCHANGE_NAME, true, false);
+    var topicExchange = new TopicExchange(STATISTICS_EXCHANGE_NAME, true, false);
 
     return new Declarables(
         deadLetterQueue,
@@ -101,14 +101,12 @@ public class RabbitMqConfig {
 
   @Bean
   public AmqpTemplate amqpTemplate(CachingConnectionFactory connectionFactory) {
-    final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-    rabbitTemplate.setMessageConverter(jsonMessageConverter());
-    return rabbitTemplate;
+    return new RabbitTemplate(connectionFactory);
   }
 
   @Bean
   RetryOperationsInterceptor statelessRetryOperationsInterceptor() {
-    RepublishMessageRecoverer recoverer =
+    var recoverer =
         new RepublishMessageRecoverer(
             amqpTemplate(connectionFactory), DEAD_LETTER_EXCHANGE_NAME, DEAD_LETTER_ROUTING_KEY);
     recoverer.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
@@ -130,9 +128,10 @@ public class RabbitMqConfig {
   @Bean
   SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(
       CachingConnectionFactory connectionFactory) {
-    SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+    var factory = new SimpleRabbitListenerContainerFactory();
     factory.setConnectionFactory(connectionFactory);
     factory.setAdviceChain(statelessRetryOperationsInterceptor());
+    factory.setMessageConverter(jsonMessageConverter());
     return factory;
   }
 }

@@ -1,5 +1,6 @@
 package de.caritas.cob.statisticsservice.api.statistics.model;
 
+import de.caritas.cob.statisticsservice.api.model.UserRole;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,6 +9,6 @@ import lombok.Data;
 public class User {
 
   private String id;
-  private UserType type;
+  private UserRole userRole;
 
 }
