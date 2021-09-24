@@ -1,11 +1,9 @@
-package de.caritas.cob.statisticsservice.api.statistics.events.assignsession;
+package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.AssignSessionStatisticsEventMessage;
-import de.caritas.cob.statisticsservice.api.model.UserRole;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticEventBuilder;
+import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEventBuilder;
 import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
-import de.caritas.cob.statisticsservice.config.RabbitMqConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,24 +17,26 @@ public class AssignSessionListener {
 
   private final @NonNull MongoTemplate mongoTemplate;
   private final @NonNull UserStatisticsService userStatisticsService;
-  private @NonNull RabbitMqConfig rabbitMqConfig;
 
   /**
    * Consumer for assign session message statistics event.
    *
    * @param eventMessage the {@link AssignSessionStatisticsEventMessage} instance
    */
-  @RabbitListener(queues = "#{rabbitMqConfig.QUEUE_NAME_ASSIGN_SESSION}")
+  @RabbitListener(
+      id = "assing-session-event-listener",
+      queues = "#{rabbitMqConfig.QUEUE_NAME_ASSIGN_SESSION}",
+      containerFactory = "simpleRabbitListenerContainerFactory")
   public void receiveMessage(AssignSessionStatisticsEventMessage eventMessage) {
 
     StatisticsEvent statisticsEvent =
-        StatisticEventBuilder.getInstance(
+        StatisticsEventBuilder.getInstance(
             () ->
                 userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().toInstant())
-            .withUserId(eventMessage.getConsultantId())
-            .withUserRole(UserRole.CONSULTANT)
+            .withUserId(eventMessage.getUserId())
+            .withUserRole(eventMessage.getUserRole())
             .build();
 
     mongoTemplate.insert(statisticsEvent);

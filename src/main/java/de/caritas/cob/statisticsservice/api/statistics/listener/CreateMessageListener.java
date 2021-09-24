@@ -1,12 +1,10 @@
-package de.caritas.cob.statisticsservice.api.statistics.events.createmessage;
+package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.CreateMessageStatisticsEventMessage;
-import de.caritas.cob.statisticsservice.api.model.UserRole;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticEventBuilder;
+import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEventBuilder;
 import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.meta.CreateMessageMetaData;
-import de.caritas.cob.statisticsservice.config.RabbitMqConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CreateMessageListener {
 
-  private final @NonNull RabbitMqConfig rabbitMqConfig;
   private final @NonNull MongoTemplate mongoTemplate;
   private final @NonNull UserStatisticsService userStatisticsService;
 
@@ -28,18 +25,19 @@ public class CreateMessageListener {
    * @param eventMessage the {@link CreateMessageStatisticsEventMessage} instance
    */
   @RabbitListener(
+      id = "create-message-event-listener",
       queues = "#{rabbitMqConfig.QUEUE_NAME_CREATE_MESSAGE}",
       containerFactory = "simpleRabbitListenerContainerFactory")
   public void receiveMessage(CreateMessageStatisticsEventMessage eventMessage) {
 
     StatisticsEvent statisticsEvent =
-        StatisticEventBuilder.getInstance(
+        StatisticsEventBuilder.getInstance(
             () ->
                 userStatisticsService.retrieveSessionViaRcGroupId(eventMessage.getRcGroupId()))
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().toInstant())
-            .withUserId(eventMessage.getConsultantId())
-            .withUserRole(UserRole.CONSULTANT)
+            .withUserId(eventMessage.getUserId())
+            .withUserRole(eventMessage.getUserRole())
             .withMetaData(buildMetaData(eventMessage))
             .build();
 
@@ -47,9 +45,6 @@ public class CreateMessageListener {
   }
 
   private CreateMessageMetaData buildMetaData(CreateMessageStatisticsEventMessage eventMessage) {
-    return CreateMessageMetaData
-        .builder()
-        .hasAttachment(eventMessage.getHasAttachment())
-        .build();
+    return CreateMessageMetaData.builder().hasAttachment(eventMessage.getHasAttachment()).build();
   }
 }

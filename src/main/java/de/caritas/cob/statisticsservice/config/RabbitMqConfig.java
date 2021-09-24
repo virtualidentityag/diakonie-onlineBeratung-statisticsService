@@ -34,16 +34,19 @@ import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 public class RabbitMqConfig {
 
   private static final String CONNECTION_NAME = "StatisticsService";
-  private static final String STATISTICS_EXCHANGE_NAME = "statistics.topic";
   private static final String DEAD_LETTER_EXCHANGE_NAME = "statistics.dead_letter";
   private static final String QUEUE_PREFIX = "statistics.";
-  public static final String QUEUE_NAME_ASSIGN_SESSION = QUEUE_PREFIX + EventType.ASSIGN_SESSION;
-  public static final String QUEUE_NAME_CREATE_MESSAGE = QUEUE_PREFIX + EventType.CREATE_MESSAGE;
   private static final String QUEUE_NAME_DEAD_LETTER_QUEUE = QUEUE_PREFIX + "dead_letter_queue";
   private static final String DEAD_LETTER_ROUTING_KEY = "DEAD_LETTER";
   private static final String X_DEAD_LETTER_EXCHANGE_HEADER = "x-dead-letter-exchange";
   private static final String X_DEAD_LETTER_ROUTING_KEY_HEADER = "x-dead-letter-routing-key";
   private final @NonNull CachingConnectionFactory connectionFactory;
+
+  public static final String STATISTICS_EXCHANGE_NAME = "statistics.topic";
+  public static final String QUEUE_NAME_ASSIGN_SESSION = QUEUE_PREFIX + EventType.ASSIGN_SESSION;
+  public static final String QUEUE_NAME_CREATE_MESSAGE = QUEUE_PREFIX + EventType.CREATE_MESSAGE;
+  public static final String QUEUE_NAME_START_VIDEO_CALL = QUEUE_PREFIX + EventType.START_VIDEO_CALL;
+  public static final String QUEUE_NAME_STOP_VIDEO_CALL = QUEUE_PREFIX + EventType.STOP_VIDEO_CALL;
 
   @Value("${spring.rabbitmq.listener.simple.retry.max-attempts}")
   private int retryMaxAttempts;
@@ -60,6 +63,8 @@ public class RabbitMqConfig {
     var deadLetterQueue = buildDeadLetterQueue();
     var assignSessionStatisticsEventQueue = buildQueue(QUEUE_NAME_ASSIGN_SESSION);
     var createMessageStatisticsEventQueue = buildQueue(QUEUE_NAME_CREATE_MESSAGE);
+    var startVideoCallStatisticsEventQueue = buildQueue(QUEUE_NAME_START_VIDEO_CALL);
+    var stopVideoCallStatisticsEventQueue = buildQueue(QUEUE_NAME_STOP_VIDEO_CALL);
 
     var deadLetterExchange = new DirectExchange(DEAD_LETTER_EXCHANGE_NAME, true, false);
     var topicExchange = new TopicExchange(STATISTICS_EXCHANGE_NAME, true, false);
@@ -76,7 +81,15 @@ public class RabbitMqConfig {
         createMessageStatisticsEventQueue,
         BindingBuilder.bind(createMessageStatisticsEventQueue)
             .to(topicExchange)
-            .with(EventType.CREATE_MESSAGE));
+            .with(EventType.CREATE_MESSAGE),
+        startVideoCallStatisticsEventQueue,
+        BindingBuilder.bind(startVideoCallStatisticsEventQueue)
+            .to(topicExchange)
+            .with(EventType.START_VIDEO_CALL),
+        stopVideoCallStatisticsEventQueue,
+        BindingBuilder.bind(stopVideoCallStatisticsEventQueue)
+            .to(topicExchange)
+            .with(EventType.STOP_VIDEO_CALL));
   }
 
   private Queue buildQueue(String queueName) {

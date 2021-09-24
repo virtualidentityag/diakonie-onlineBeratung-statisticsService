@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.function.Supplier;
 
 /** Builder for a {@link StatisticsEvent} instance. */
-public class StatisticEventBuilder {
+public class StatisticsEventBuilder {
 
   private final Supplier<SessionStatisticsResultDTO> sessionSupplier;
   private EventType eventType;
@@ -18,29 +18,29 @@ public class StatisticEventBuilder {
   private UserRole userRole;
   private Object metaData;
 
-  private StatisticEventBuilder(Supplier<SessionStatisticsResultDTO> sessionSupplier) {
+  private StatisticsEventBuilder(Supplier<SessionStatisticsResultDTO> sessionSupplier) {
     this.sessionSupplier = sessionSupplier;
   }
 
   /**
-   * Creates the {@link StatisticEventBuilder} instance.
+   * Creates the {@link StatisticsEventBuilder} instance.
    *
    * @param sessionSupplier A (@link {@link Supplier} for a {@link SessionStatisticsResultDTO}
    *     instance
-   * @return a instance of {@link StatisticEventBuilder}
+   * @return a instance of {@link StatisticsEventBuilder}
    */
-  public static StatisticEventBuilder getInstance(
+  public static StatisticsEventBuilder getInstance(
       Supplier<SessionStatisticsResultDTO> sessionSupplier) {
-    return new StatisticEventBuilder(sessionSupplier);
+    return new StatisticsEventBuilder(sessionSupplier);
   }
 
   /**
    * Sets the {@link EventType}.
    *
    * @param eventType the {@link EventType}
-   * @return the current {@link StatisticEventBuilder}
+   * @return the current {@link StatisticsEventBuilder}
    */
-  public StatisticEventBuilder withEventType(EventType eventType) {
+  public StatisticsEventBuilder withEventType(EventType eventType) {
     this.eventType = eventType;
     return this;
   }
@@ -49,9 +49,9 @@ public class StatisticEventBuilder {
    * Sets the timestamp of the event.
    *
    * @param timestamp the timestamp as {@link Instant}
-   * @return the current {@link StatisticEventBuilder}
+   * @return the current {@link StatisticsEventBuilder}
    */
-  public StatisticEventBuilder withTimestamp(Instant timestamp) {
+  public StatisticsEventBuilder withTimestamp(Instant timestamp) {
     this.timestamp = timestamp;
     return this;
   }
@@ -60,9 +60,9 @@ public class StatisticEventBuilder {
    * Sets the user id.
    *
    * @param userId the id of the user to whom the event should be assigned
-   * @return the current {@link StatisticEventBuilder}
+   * @return the current {@link StatisticsEventBuilder}
    */
-  public StatisticEventBuilder withUserId(String userId) {
+  public StatisticsEventBuilder withUserId(String userId) {
     this.userId = userId;
     return this;
   }
@@ -71,9 +71,9 @@ public class StatisticEventBuilder {
    * Sets the {@link UserRole}.
    *
    * @param userRole the {@link UserRole} of the user to whom the event should be assigned
-   * @return the current {@link StatisticEventBuilder}
+   * @return the current {@link StatisticsEventBuilder}
    */
-  public StatisticEventBuilder withUserRole(UserRole userRole) {
+  public StatisticsEventBuilder withUserRole(UserRole userRole) {
     this.userRole = userRole;
     return this;
   }
@@ -82,9 +82,9 @@ public class StatisticEventBuilder {
    * Sets the additional meta data. It must be a serializable {@link Object}.
    *
    * @param metaData additional meta data informationen for the event
-   * @return the current {@link StatisticEventBuilder}
+   * @return the current {@link StatisticsEventBuilder}
    */
-  public StatisticEventBuilder withMetaData(Object metaData) {
+  public StatisticsEventBuilder withMetaData(Object metaData) {
     this.metaData = metaData;
     return this;
   }
