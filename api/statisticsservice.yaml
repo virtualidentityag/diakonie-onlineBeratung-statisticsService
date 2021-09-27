@@ -110,7 +110,7 @@ components:
           description: indicates whether the message has an attachment
           example: true
 
-    StartVideoCallSatisticsEventMessage:
+    StartVideoCallStatisticsEventMessage:
       type: object
       required:
         - sessionId

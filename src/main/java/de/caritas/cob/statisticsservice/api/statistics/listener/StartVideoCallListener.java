@@ -1,6 +1,6 @@
 package de.caritas.cob.statisticsservice.api.statistics.listener;
 
-import de.caritas.cob.statisticsservice.api.model.StartVideoCallSatisticsEventMessage;
+import de.caritas.cob.statisticsservice.api.model.StartVideoCallStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
 import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEventBuilder;
@@ -24,13 +24,13 @@ public class StartVideoCallListener {
   /**
    * Consumer for start video call statics statistics event.
    *
-   * @param eventMessage the {@link StartVideoCallSatisticsEventMessage} instance
+   * @param eventMessage the {@link StartVideoCallStatisticsEventMessage} instance
    */
   @RabbitListener(
       id = "start-video-call-event-listener",
       queues = "#{rabbitMqConfig.QUEUE_NAME_START_VIDEO_CALL}",
       containerFactory = "simpleRabbitListenerContainerFactory")
-  public void receiveMessage(StartVideoCallSatisticsEventMessage eventMessage) {
+  public void receiveMessage(StartVideoCallStatisticsEventMessage eventMessage) {
 
     StatisticsEvent statisticsEvent =
         StatisticsEventBuilder.getInstance(
@@ -46,7 +46,7 @@ public class StartVideoCallListener {
     mongoTemplate.insert(statisticsEvent);
   }
 
-  private StartVideoCallMetaData buildMetaData(StartVideoCallSatisticsEventMessage eventMessage) {
+  private StartVideoCallMetaData buildMetaData(StartVideoCallStatisticsEventMessage eventMessage) {
     return StartVideoCallMetaData.builder()
         .videoCallUuid(eventMessage.getVideoCallUuid())
         .duration(0)
