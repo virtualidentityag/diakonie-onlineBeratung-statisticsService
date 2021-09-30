@@ -1,4 +1,4 @@
-package de.caritas.cob.statisticsservice.api.statistics.model.meta;
+package de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta;
 
 import lombok.Builder;
 import lombok.Data;

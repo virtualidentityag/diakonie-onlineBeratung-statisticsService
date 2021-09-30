@@ -1,0 +1,19 @@
+[
+  {
+    "_id": "615580ef18938619089c77df",
+    "eventType": "ASSIGN_SESSION",
+    "sessionId": 601,
+    "timestamp": "2021-05-02T10:30:20.294Z",
+    "consultingType": {
+      "_id": 0
+    },
+    "user": {
+      "_id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "_id": 1
+    },
+    "_class": "de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent"
+  }
+]

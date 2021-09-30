@@ -2,8 +2,8 @@ package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.AssignSessionStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEventBuilder;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEventBuilder;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

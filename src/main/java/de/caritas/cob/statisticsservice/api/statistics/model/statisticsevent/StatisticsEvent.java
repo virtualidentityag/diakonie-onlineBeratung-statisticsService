@@ -1,4 +1,4 @@
-package de.caritas.cob.statisticsservice.api.statistics.model;
+package de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent;
 
 import de.caritas.cob.statisticsservice.api.model.EventType;
 import java.time.Instant;

@@ -2,9 +2,9 @@ package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.EventType;
 import de.caritas.cob.statisticsservice.api.model.StopVideoCallStatisticsEventMessage;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
-import de.caritas.cob.statisticsservice.api.statistics.model.meta.StartVideoCallMetaData;
-import de.caritas.cob.statisticsservice.api.statistics.model.meta.VideoCallStatus;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.StartVideoCallMetaData;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.VideoCallStatus;
 import java.time.Duration;
 import java.util.List;
 import lombok.NonNull;

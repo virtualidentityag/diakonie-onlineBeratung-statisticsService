@@ -53,7 +53,7 @@ public class StatisticsControllerAuthorizationIT {
             .cookie(csrfCookie)
             .header(CSRF_HEADER, CSRF_VALUE)
             .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -61,28 +61,6 @@ public class StatisticsControllerAuthorizationIT {
   public void getConsultantStatistics_Should_ReturnForbidden_When_NoConsultantDefaultAuthority()
       throws Exception {
     this.mvc.perform(get(PATH_GET_CONSULTANT_STATISTICS)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-  }
-
-  @Test
-  @WithMockUser(authorities = {AuthorityValue.CONSULTANT_DEFAULT})
-  public void getConsultantStatisticsCsv_Should_ReturnOK_When_ProperlyAuthorizedWithConsultantAuthority()
-      throws Exception {
-    this.mvc.perform(get(PATH_GET_CONSULTANT_STATISTICS_CSV)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
-  }
-
-  @Test
-  @WithMockUser
-  public void getConsultantStatisticsCsv_Should_ReturnForbidden_When_NoConsultantDefaultAuthority()
-      throws Exception {
-    this.mvc.perform(get(PATH_GET_CONSULTANT_STATISTICS_CSV)
             .cookie(csrfCookie)
             .header(CSRF_HEADER, CSRF_VALUE)
             .contentType(MediaType.APPLICATION_JSON))

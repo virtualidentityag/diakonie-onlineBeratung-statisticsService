@@ -2,10 +2,10 @@ package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.StartVideoCallStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEventBuilder;
-import de.caritas.cob.statisticsservice.api.statistics.model.meta.StartVideoCallMetaData;
-import de.caritas.cob.statisticsservice.api.statistics.model.meta.VideoCallStatus;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEventBuilder;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.StartVideoCallMetaData;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.VideoCallStatus;
 import java.time.temporal.ChronoUnit;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

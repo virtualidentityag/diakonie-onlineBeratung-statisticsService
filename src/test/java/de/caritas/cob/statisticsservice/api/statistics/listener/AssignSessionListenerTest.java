@@ -17,7 +17,7 @@ import de.caritas.cob.statisticsservice.api.model.AssignSessionStatisticsEventMe
 import de.caritas.cob.statisticsservice.api.model.EventType;
 import de.caritas.cob.statisticsservice.api.model.UserRole;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
-import de.caritas.cob.statisticsservice.api.statistics.model.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.model.SessionStatisticsResultDTO;
 import java.time.OffsetDateTime;
 import org.junit.Test;
