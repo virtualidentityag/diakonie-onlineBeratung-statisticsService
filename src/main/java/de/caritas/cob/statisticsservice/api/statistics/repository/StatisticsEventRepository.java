@@ -24,7 +24,7 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
           "{$project: {'_id':0}}",
           "{$count: 'totalCount'}"
       })
-  public long calculateNumbersOfSessionsWhereUserWasActive(String userId, Instant dateFrom, Instant dateTo);
+  long calculateNumbersOfSessionsWhereUserWasActive(String userId, Instant dateFrom, Instant dateTo);
 
   /**
    * Calculate the number of sent messages in the given period.
@@ -35,10 +35,10 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
    * @return the number of sent messages in the given period
    */
   @Query(value = "{'user._id': ?0, 'eventType': 'CREATE_MESSAGE', 'timestamp':{$gte:?1,$lte:?2}}", count = true)
-  public long calculateNumberOfSentMessagesForUser(String userId, Instant dateFrom, Instant dateTo);
+  long calculateNumberOfSentMessagesForUser(String userId, Instant dateFrom, Instant dateTo);
 
   /**
-   * Calculate the time a user has spent in video class in the given time period.
+   * Calculate the time a user has spent in video calls in the given time period.
    *
    * @param userId the user id
    * @param dateFrom the start date of the period
@@ -49,7 +49,7 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
       "{'$match':{'user._id': ?0,'eventType': 'START_VIDEO_CALL','timestamp':{$gte:?1,$lte:?2}}}",
       "{'$group':{'_id':'','total':{'$sum':'$metaData.duration'}}}"
       })
-  public long calculateTimeInVideoCallsForUser(String userId, Instant dateFrom, Instant dateTo);
+  long calculateTimeInVideoCallsForUser(String userId, Instant dateFrom, Instant dateTo);
 
   /**
    * Calculate the number of sessions assigned to a user in the given time period.
@@ -60,5 +60,5 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
    * @return the number of the new sessions
    */
   @Query(value = "{'user._id': ?0, 'eventType': 'ASSIGN_SESSION', 'timestamp':{$gte:?1,$lte:?2}}", count = true)
-  public long calculateNumberOfAssignedSessionsForUser(String userId, Instant dateFrom, Instant dateTo);
+  long calculateNumberOfAssignedSessionsForUser(String userId, Instant dateFrom, Instant dateTo);
 }

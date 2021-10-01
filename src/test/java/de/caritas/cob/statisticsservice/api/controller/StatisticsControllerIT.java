@@ -1,7 +1,6 @@
 package de.caritas.cob.statisticsservice.api.controller;
 
 import static de.caritas.cob.statisticsservice.api.testhelper.PathConstants.PATH_GET_CONSULTANT_STATISTICS;
-import static de.caritas.cob.statisticsservice.api.testhelper.PathConstants.PATH_GET_CONSULTANT_STATISTICS_CSV;
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.CONSULTANT_STATISTICS_RESPONSE_DTO;
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.DATE_FROM;
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.DATE_FROM_FORMATTED;

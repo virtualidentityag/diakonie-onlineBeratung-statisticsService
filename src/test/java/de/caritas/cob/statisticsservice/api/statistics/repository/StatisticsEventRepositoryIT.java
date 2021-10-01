@@ -45,7 +45,7 @@ public class StatisticsEventRepositoryIT {
   @Autowired MongoTemplate mongoTemplate;
 
   @Before
-  public void createDataSet() throws IOException {
+  public void preFillMongoDb() throws IOException {
     mongoTemplate.dropCollection(MONGO_COLLECTION_NAME);
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());

@@ -43,8 +43,8 @@ public class StatisticsService {
 
   private ConsultantStatisticsResponseDTO buildResponseDTO(LocalDate dateFrom, LocalDate dateTo) {
 
-    Instant dateFromConverted = convertDateFrom(dateFrom);
-    Instant dateToConverted = convertDateTo(dateTo);
+    Instant dateFromConverted = convertDateWithMinimumTimeAndUtc(dateFrom);
+    Instant dateToConverted = convertDateWithMaximumTimeAndUtc(dateTo);
 
     return new ConsultantStatisticsResponseDTO()
         .numberOfAssignedSessions(statisticsEventRepository
@@ -71,11 +71,11 @@ public class StatisticsService {
         .dateTo(dateTo);
   }
 
-  private Instant convertDateFrom(LocalDate dateFrom) {
+  private Instant convertDateWithMinimumTimeAndUtc(LocalDate dateFrom) {
     return OffsetDateTime.of(dateFrom, LocalTime.MIN, ZoneOffset.UTC).toInstant();
   }
 
-  private Instant convertDateTo(LocalDate dateTo) {
+  private Instant convertDateWithMaximumTimeAndUtc(LocalDate dateTo) {
     return OffsetDateTime.of(dateTo, LocalTime.MAX, ZoneOffset.UTC).toInstant();
   }
 

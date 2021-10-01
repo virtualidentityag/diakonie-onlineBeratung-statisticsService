@@ -41,26 +41,6 @@ public class StopVideoCallListener {
     mongoTemplate.save(statisticsEvent);
   }
 
-  private Query buildQuery(String videoCallUuid) {
-    return new Query()
-        .addCriteria(Criteria.where("metaData.videoCallUuid").is(videoCallUuid));
-  }
-
-  private StartVideoCallMetaData enrichMetaData(
-      StartVideoCallMetaData metaData,
-      StopVideoCallStatisticsEventMessage eventMessage,
-      StatisticsEvent statisticsEvent) {
-    metaData.setDuration(
-        Duration
-            .between(
-                statisticsEvent.getTimestamp(),
-                eventMessage.getTimestamp().toInstant())
-            .getSeconds());
-    metaData.setTimestampStop(eventMessage.getTimestamp().toInstant());
-    metaData.setStatus(VideoCallStatus.FINISHED);
-    return metaData;
-  }
-
   private StatisticsEvent fetchVideoCallStartEvent(
       StopVideoCallStatisticsEventMessage eventMessage) {
     List<StatisticsEvent> statisticsEventList =
@@ -72,8 +52,28 @@ public class StopVideoCallListener {
     return statisticsEventList.get(0);
   }
 
-  private void checkForMultipleEvents(StopVideoCallStatisticsEventMessage eventMessage,
-      List<StatisticsEvent> statisticsEventList) {
+  private Query buildQuery(String videoCallUuid) {
+    return new Query().addCriteria(Criteria.where("metaData.videoCallUuid").is(videoCallUuid));
+  }
+
+  private StartVideoCallMetaData enrichMetaData(
+      StartVideoCallMetaData metaData,
+      StopVideoCallStatisticsEventMessage eventMessage,
+      StatisticsEvent statisticsEvent) {
+    metaData.setDuration(calculateDuration(eventMessage, statisticsEvent));
+    metaData.setTimestampStop(eventMessage.getTimestamp().toInstant());
+    metaData.setStatus(VideoCallStatus.FINISHED);
+    return metaData;
+  }
+
+  private long calculateDuration(
+      StopVideoCallStatisticsEventMessage eventMessage, StatisticsEvent statisticsEvent) {
+    return Duration.between(statisticsEvent.getTimestamp(), eventMessage.getTimestamp().toInstant())
+        .getSeconds();
+  }
+
+  private void checkForMultipleEvents(
+      StopVideoCallStatisticsEventMessage eventMessage, List<StatisticsEvent> statisticsEventList) {
     if (statisticsEventList.size() > 1) {
       throw new AmqpException(
           String.format(
@@ -82,8 +82,8 @@ public class StopVideoCallListener {
     }
   }
 
-  private void checkIfListIsEmpty(StopVideoCallStatisticsEventMessage eventMessage,
-      List<StatisticsEvent> statisticsEventList) {
+  private void checkIfListIsEmpty(
+      StopVideoCallStatisticsEventMessage eventMessage, List<StatisticsEvent> statisticsEventList) {
     if (statisticsEventList.isEmpty()) {
       throw new AmqpException(
           String.format(
