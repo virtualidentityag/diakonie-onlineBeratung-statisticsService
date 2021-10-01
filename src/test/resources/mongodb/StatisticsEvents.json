@@ -1,19 +1,333 @@
 [
   {
-    "_id": "615580ef18938619089c77df",
+    "id": "615580ef18938613339c77df",
+    "eventType": "ASSIGN_SESSION",
+    "sessionId": 599,
+    "timestamp": "2021-04-23T15:05:10.111Z",
+    "consultingType": {
+      "id": 0
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "61558abcabc38441119c77df",
+    "eventType": "START_VIDEO_CALL",
+    "sessionId": 619,
+    "timestamp": "2021-04-26T15:00:00.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": {
+      "videoCallUuid": "34234234",
+      "duration": 900,
+      "timestampStop": "2021-04-26T15:15:00.00Z",
+      "videoCallStatus": "FINISHED"
+    }
+  },
+  {
+    "id": "615111ef18938619089c77df",
     "eventType": "ASSIGN_SESSION",
     "sessionId": 601,
     "timestamp": "2021-05-02T10:30:20.294Z",
     "consultingType": {
-      "_id": 0
+      "id": 0
     },
     "user": {
-      "_id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
       "userRole": "CONSULTANT"
     },
     "agency": {
-      "_id": 1
+      "id": 1
     },
-    "_class": "de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent"
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615580ef18938619089c77df",
+    "eventType": "ASSIGN_SESSION",
+    "sessionId": 604,
+    "timestamp": "2021-05-20T11:13:00.00Z",
+    "consultingType": {
+      "id": 1
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 15
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615580ef78938619089c77df",
+    "eventType": "ASSIGN_SESSION",
+    "sessionId": 610,
+    "timestamp": "2021-05-21T09:17:21.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615580ef189386a4fg89c77df",
+    "eventType": "ASSIGN_SESSION",
+    "sessionId": 615,
+    "timestamp": "2021-06-01T00:00:00.00Z",
+    "consultingType": {
+      "id": 0
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 1
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "123580ef18938613339c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 599,
+    "timestamp": "2021-04-23T15:05:10.111Z",
+    "consultingType": {
+      "id": 0
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615111ef18938889089c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 601,
+    "timestamp": "2021-05-02T10:30:20.294Z",
+    "consultingType": {
+      "id": 0
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 1
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615111efabc38889089c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 644,
+    "timestamp": "2021-05-08T10:30:20.294Z",
+    "consultingType": {
+      "id": 0
+    },
+    "user": {
+      "id": "cd3f4cc0-215d-40e2-a866-2d3e910f0545",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 1
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615abcef18938619089c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 601,
+    "timestamp": "2021-05-20T11:13:00.00Z",
+    "consultingType": {
+      "id": 1
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 15
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615580ef78938611119c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 610,
+    "timestamp": "2021-05-21T09:17:21.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615580ef7893ab11119c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 613,
+    "timestamp": "2021-05-21T09:17:21.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "615580ef78988991119c77df",
+    "eventType": "START_VIDEO_CALL",
+    "sessionId": 610,
+    "timestamp": "2021-05-22T09:30:00.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "a73f4cc0-215d-40e2-a866-2d3e910f0512",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": {
+      "videoCallUuid": "xyz",
+      "duration": 900,
+      "timestampStop": "2021-05-22T09:45:00.00Z",
+      "videoCallStatus": "FINISHED"
+    }
+  },
+  {
+    "id": "61558abc78938611119c77df",
+    "eventType": "START_VIDEO_CALL",
+    "sessionId": 619,
+    "timestamp": "2021-05-25T15:00:00.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": {
+      "videoCallUuid": "123tzz",
+      "duration": 900,
+      "timestampStop": "2021-05-25T15:15:00.00Z",
+      "videoCallStatus": "FINISHED"
+    }
+  },
+  {
+    "id": "61558abc78238611119c77df",
+    "eventType": "START_VIDEO_CALL",
+    "sessionId": 620,
+    "timestamp": "2021-05-26T15:00:00.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": {
+      "videoCallUuid": "dfsfsf",
+      "duration": 900,
+      "timestampStop": "2021-05-26T15:16:00.00Z",
+      "videoCallStatus": "FINISHED"
+    }
+  },
+  {
+    "id": "615554af189386a4fg89c77df",
+    "eventType": "CREATE_MESSAGE",
+    "sessionId": 615,
+    "timestamp": "2021-06-01T00:00:00.00Z",
+    "consultingType": {
+      "id": 0
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 1
+    },
+    "diocese": null,
+    "metaData": null
+  },
+  {
+    "id": "61558abcefg38611119c77df",
+    "eventType": "START_VIDEO_CALL",
+    "sessionId": 633,
+    "timestamp": "2021-06-10T15:00:00.00Z",
+    "consultingType": {
+      "id": 6
+    },
+    "user": {
+      "id": "d63f4cc0-215d-40e2-a866-2d3e910f0590",
+      "userRole": "CONSULTANT"
+    },
+    "agency": {
+      "id": 2
+    },
+    "diocese": null,
+    "metaData": {
+      "videoCallUuid": "aaa",
+      "duration": 1800,
+      "timestampStop": "2021-06-10T15:30:00.00Z",
+      "videoCallStatus": "FINISHED"
+    }
   }
 ]
