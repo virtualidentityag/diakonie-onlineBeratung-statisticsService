@@ -69,7 +69,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers(WHITE_LIST).permitAll()
-        .antMatchers("/statistics/consultant", "/statistics/consultant/csv").hasAuthority(CONSULTANT.getAuthority())
+        .antMatchers("/statistics/consultant").hasAuthority(CONSULTANT.getAuthority())
         .anyRequest().denyAll();
   }
 
