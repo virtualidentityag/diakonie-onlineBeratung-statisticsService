@@ -62,7 +62,7 @@ public class LogServiceTest {
   public void logInfo_Should_LogInfoMessage() {
 
     LogService.logInfo("info message");
-    verify(logger, atLeastOnce()).info(eq("info message"));
+    verify(logger, atLeastOnce()).info("info message");
   }
 
   @Test

@@ -1,10 +1,12 @@
 package de.caritas.cob.statisticsservice.api;
 
+import com.mongodb.MongoException;
 import de.caritas.cob.statisticsservice.api.exception.KeycloakException;
 import de.caritas.cob.statisticsservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.statisticsservice.api.exception.httpresponses.InternalServerErrorException;
 import de.caritas.cob.statisticsservice.api.exception.httpresponses.NotFoundException;
 import de.caritas.cob.statisticsservice.api.service.LogService;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import javax.validation.ConstraintViolationException;
 import lombok.NoArgsConstructor;
@@ -47,7 +49,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final BadRequestException ex, final WebRequest request) {
     LogService.logWarning(ex);
 
-    return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -62,7 +64,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final ConstraintViolationException ex, final WebRequest request) {
     LogService.logWarning(ex);
 
-    return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -83,7 +85,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final @NonNull WebRequest request) {
     LogService.logWarning(status, ex);
 
-    return handleExceptionInternal(ex, null, headers, status, request);
+    return new ResponseEntity<>(null, status);
   }
 
   /**
@@ -104,7 +106,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final @NonNull WebRequest request) {
     LogService.logWarning(status, ex);
 
-    return handleExceptionInternal(ex, null, headers, status, request);
+    return new ResponseEntity<>(null, status);
   }
 
   /**
@@ -119,7 +121,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final RuntimeException ex, final WebRequest request) {
     LogService.logWarning(HttpStatus.CONFLICT, ex);
 
-    return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    return new ResponseEntity<>(null, HttpStatus.CONFLICT);
   }
 
   /**
@@ -131,13 +133,13 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
    */
   @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class,
       IllegalStateException.class, KeycloakException.class,
-      UnknownHostException.class, DataAccessException.class})
+      UnknownHostException.class, DataAccessException.class,
+      ConnectException.class, MongoException.class})
   public ResponseEntity<Object> handleInternal(
       final RuntimeException ex, final WebRequest request) {
     LogService.logInternalServerError(ex);
 
-    return handleExceptionInternal(
-        EMPTY_EXCEPTION, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   /**
@@ -152,8 +154,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final InternalServerErrorException ex, final WebRequest request) {
     ex.executeLogging();
 
-    return handleExceptionInternal(
-        EMPTY_EXCEPTION, null, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   /**
@@ -167,12 +168,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
   public ResponseEntity<Object> handleInternal(
       final NotFoundException ex, final WebRequest request) {
 
-    return handleExceptionInternal(
-        ex,
-        null,
-        new HttpHeaders(),
-        HttpStatus.NOT_FOUND,
-        request);
+    return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
   }
 
   /**
@@ -187,8 +183,7 @@ public class ApiResponseEntityExceptionHandler extends ResponseEntityExceptionHa
       final WebRequest request) {
     LogService.logError(ex);
 
-    return handleExceptionInternal(EMPTY_EXCEPTION, null, new HttpHeaders(), ex.getStatusCode(),
-        request);
+    return new ResponseEntity<>(null, ex.getStatusCode());
   }
 
 }

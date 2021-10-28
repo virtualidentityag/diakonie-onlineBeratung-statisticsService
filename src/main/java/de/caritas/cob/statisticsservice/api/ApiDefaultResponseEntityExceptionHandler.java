@@ -1,18 +1,16 @@
 package de.caritas.cob.statisticsservice.api;
 
 import de.caritas.cob.statisticsservice.api.service.LogService;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
+@NoArgsConstructor
 public class ApiDefaultResponseEntityExceptionHandler {
-
-  private static final MultiValueMap<String, String> EMPTY_HEADERS = new LinkedMultiValueMap<>();
 
   /**
    * "Catch all" respectively fallback for all controller error messages that are not specifically
@@ -23,11 +21,11 @@ public class ApiDefaultResponseEntityExceptionHandler {
    * @param request the {@link WebRequest}
    * @return a {@link ResponseEntity}
    */
-  @ExceptionHandler({RuntimeException.class})
+  @ExceptionHandler(value = RuntimeException.class)
   public ResponseEntity<Object> handleInternal(final RuntimeException ex,
       final WebRequest request) {
     LogService.logInternalServerError(ex);
 
-    return new ResponseEntity<>(EMPTY_HEADERS, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

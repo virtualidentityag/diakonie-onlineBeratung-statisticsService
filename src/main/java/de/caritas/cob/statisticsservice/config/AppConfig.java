@@ -1,6 +1,5 @@
 package de.caritas.cob.statisticsservice.config;
 
-import javax.persistence.EntityManagerFactory;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
