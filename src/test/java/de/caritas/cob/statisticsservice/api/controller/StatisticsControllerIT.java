@@ -63,7 +63,7 @@ public class StatisticsControllerIT {
     when(statisticsService.fetchStatisticsData(DATE_FROM, DATE_TO)).thenReturn(CONSULTANT_STATISTICS_RESPONSE_DTO);
 
     mvc.perform(
-        get(PATH_GET_CONSULTANT_STATISTICS + "?dateFrom=" + DATE_FROM_FORMATTED + "&dateTo=" + DATE_TO_FORMATTED)
+        get(PATH_GET_CONSULTANT_STATISTICS + "?startDate=" + DATE_FROM_FORMATTED + "&endDate=" + DATE_TO_FORMATTED)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(consultantStatisticsResponseDtoToJson()));

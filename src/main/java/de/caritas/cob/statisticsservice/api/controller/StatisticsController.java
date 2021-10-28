@@ -23,15 +23,15 @@ public class StatisticsController implements StatisticsApi {
   /**
    * Returns statistical data for a consultant.
    *
-   * @param dateFrom start of the period (inclusive)
-   * @param dateTo end of the period (inclusive)
+   * @param startDate start of the period (inclusive)
+   * @param endDate end of the period (inclusive)
    * @return a {@link ConsultantStatisticsResponseDTO} instance with the statistical data.
    */
   @Override
   public ResponseEntity<ConsultantStatisticsResponseDTO> getConsultantStatistics(
-      @RequestParam LocalDate dateFrom, @RequestParam LocalDate dateTo) {
+      @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
     return new ResponseEntity<>(
-        statisticsService.fetchStatisticsData(dateFrom, dateTo),
+        statisticsService.fetchStatisticsData(startDate, endDate),
         HttpStatus.OK);
   }
 
