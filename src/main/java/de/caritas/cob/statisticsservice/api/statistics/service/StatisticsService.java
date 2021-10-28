@@ -1,5 +1,7 @@
 package de.caritas.cob.statisticsservice.api.statistics.service;
 
+import static java.util.Objects.nonNull;
+
 import de.caritas.cob.statisticsservice.api.exception.httpresponses.BadRequestException;
 import de.caritas.cob.statisticsservice.api.helper.AuthenticatedUser;
 import de.caritas.cob.statisticsservice.api.model.ConsultantStatisticsResponseDTO;
@@ -20,14 +22,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StatisticsService {
 
-  private @NonNull StatisticsEventRepository statisticsEventRepository;
-  private @NonNull AuthenticatedUser authenticatedUser;
+  private final @NonNull StatisticsEventRepository statisticsEventRepository;
+  private final @NonNull AuthenticatedUser authenticatedUser;
 
   /**
    * Returns statistical data for a consultant.
    *
    * @param dateFrom the start date of the period
-   * @param dateTo the end date of the period
+   * @param dateTo   the end date of the period
    * @return a {@link ConsultantStatisticsResponseDTO} instance with the statistical data.
    */
   public ConsultantStatisticsResponseDTO fetchStatisticsData(LocalDate dateFrom, LocalDate dateTo) {
@@ -57,18 +59,29 @@ public class StatisticsService {
                 authenticatedUser.getUserId(),
                 dateFromConverted,
                 dateToConverted))
-        .numberOfSessionsWhereConsultantWasActive(statisticsEventRepository
-            .calculateNumbersOfSessionsWhereUserWasActive(
-                authenticatedUser.getUserId(),
-                dateFromConverted,
-                dateToConverted))
-        .videoCallDuration(statisticsEventRepository
-            .calculateTimeInVideoCallsForUser(
-                authenticatedUser.getUserId(),
-                dateFromConverted,
-                dateToConverted))
+        .numberOfSessionsWhereConsultantWasActive(
+            extractActiveNumberOfSessions(dateFromConverted, dateToConverted))
+        .videoCallDuration(extractVideoCallDuration(dateFromConverted, dateToConverted))
         .dateFrom(dateFrom)
         .dateTo(dateTo);
+  }
+
+  private long extractActiveNumberOfSessions(Instant dateFromConverted, Instant dateToConverted) {
+    var result = statisticsEventRepository
+        .calculateNumbersOfSessionsWhereUserWasActive(
+            authenticatedUser.getUserId(),
+            dateFromConverted,
+            dateToConverted);
+    return nonNull(result) ? result.getTotalCount() : 0L;
+  }
+
+  private long extractVideoCallDuration(Instant dateFromConverted, Instant dateToConverted) {
+    var result = statisticsEventRepository
+        .calculateTimeInVideoCallsForUser(
+            authenticatedUser.getUserId(),
+            dateFromConverted,
+            dateToConverted);
+    return nonNull(result) ? result.getTotal() : 0L;
   }
 
   private Instant convertDateWithMinimumTimeAndUtc(LocalDate dateFrom) {
