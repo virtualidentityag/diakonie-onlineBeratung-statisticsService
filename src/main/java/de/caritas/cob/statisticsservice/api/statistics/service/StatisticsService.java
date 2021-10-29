@@ -62,8 +62,8 @@ public class StatisticsService {
         .numberOfSessionsWhereConsultantWasActive(
             extractActiveNumberOfSessions(dateFromConverted, dateToConverted))
         .videoCallDuration(extractVideoCallDuration(dateFromConverted, dateToConverted))
-        .dateFrom(dateFrom)
-        .dateTo(dateTo);
+        .startDate(dateFrom)
+        .endDate(dateTo);
   }
 
   private long extractActiveNumberOfSessions(Instant dateFromConverted, Instant dateToConverted) {
