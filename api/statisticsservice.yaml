@@ -47,11 +47,11 @@ components:
     ConsultantStatisticsResponseDTO:
       type: object
       properties:
-        dateFrom:
+        startDate:
           type: string
           format: date
           example: 2019-10-23
-        dateTo:
+        endDate:
           type: string
           format: date
           example: 2019-10-23

@@ -24,8 +24,8 @@ public class TestConstants {
 
   public static ConsultantStatisticsResponseDTO CONSULTANT_STATISTICS_RESPONSE_DTO =
       new ConsultantStatisticsResponseDTO()
-          .dateFrom(DATE_FROM)
-          .dateTo(DATE_TO)
+          .startDate(DATE_FROM)
+          .endDate(DATE_TO)
           .numberOfSessionsWhereConsultantWasActive(5L)
           .numberOfSentMessages(10L)
           .numberOfAssignedSessions(2L)
