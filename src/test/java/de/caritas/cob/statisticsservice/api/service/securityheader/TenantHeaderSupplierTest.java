@@ -37,7 +37,4 @@ class TenantHeaderSupplierTest {
     tenantHeaderSupplier.addTechnicalTenantHeaderIfMultitenancyEnabled(headers);
     assertThat(headers.get("tenantId")).isNull();
   }
-
-
-
 }
