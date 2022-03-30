@@ -1,5 +1,7 @@
 package de.caritas.cob.statisticsservice.api.service.securityheader;
 
+import static java.lang.Boolean.TRUE;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +19,7 @@ public class TenantHeaderSupplier {
   private Boolean multitenancy;
 
   public void addTechnicalTenantHeaderIfMultitenancyEnabled(HttpHeaders headers) {
-    if (Boolean.TRUE.equals(multitenancy)) {
+    if (TRUE.equals(multitenancy)) {
       headers.add("tenantId", TECHNICAL_TENANT_CONTEXT);
     }
   }
