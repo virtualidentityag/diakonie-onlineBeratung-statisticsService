@@ -23,8 +23,4 @@ public class TenantHeaderSupplier {
       headers.add("tenantId", TECHNICAL_TENANT_CONTEXT);
     }
   }
-
-  void setMultitenancy(boolean multitenancy) {
-    this.multitenancy = multitenancy;
-  }
 }

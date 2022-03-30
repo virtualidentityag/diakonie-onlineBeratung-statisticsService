@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,20 +22,23 @@ class TenantHeaderSupplierTest {
   @Test
   void addTechnicalTenantHeaderIfMultitenancyEnabled_Should_AddHeaderIfMultitenancyEnabled() {
     // given
-    tenantHeaderSupplier.setMultitenancy(true);
+    ReflectionTestUtils.setField(tenantHeaderSupplier, "multitenancy", true);
     HttpHeaders headers = new HttpHeaders();
-    // when, then
+    // when
     tenantHeaderSupplier.addTechnicalTenantHeaderIfMultitenancyEnabled(headers);
+    // then
     assertThat(headers.get("tenantId").get(0)).isEqualTo("0");
   }
 
   @Test
   void addTechnicalTenantHeaderIfMultitenancyEnabled_Should_Not_AddHeaderIfMultitenancyNotEnabled() {
     // given
-    tenantHeaderSupplier.setMultitenancy(false);
+    ReflectionTestUtils.setField(tenantHeaderSupplier, "multitenancy", false);
+
     HttpHeaders headers = new HttpHeaders();
-    // when, then
+    // when
     tenantHeaderSupplier.addTechnicalTenantHeaderIfMultitenancyEnabled(headers);
+    // then
     assertThat(headers.get("tenantId")).isNull();
   }
 }
