@@ -14,10 +14,10 @@ public class TenantHeaderSupplier {
   private static final String TECHNICAL_TENANT_CONTEXT = "0";
 
   @Value("${multitenancy.enabled}")
-  private boolean multitenancy;
+  private Boolean multitenancy;
 
   public void addTechnicalTenantHeaderIfMultitenancyEnabled(HttpHeaders headers) {
-    if (multitenancy) {
+    if (Boolean.TRUE.equals(multitenancy)) {
       headers.add("tenantId", TECHNICAL_TENANT_CONTEXT);
     }
   }
