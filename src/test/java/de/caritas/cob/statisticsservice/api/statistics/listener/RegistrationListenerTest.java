@@ -18,6 +18,7 @@ import de.caritas.cob.statisticsservice.api.model.UserRole;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.RegistrationMetaData;
+import de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.model.SessionStatisticsResultDTO;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class RegistrationListenerTest {
   @Test
   public void registration_Should_saveEventToMongoDb() {
 
-    de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.model.SessionStatisticsResultDTO sessionStatisticsResultDTO = buildResultDto();
+    SessionStatisticsResultDTO sessionStatisticsResultDTO = buildResultDto();
     when(userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
         .thenReturn(sessionStatisticsResultDTO);
 
@@ -68,8 +69,8 @@ public class RegistrationListenerTest {
         is(buildMetaData(registrationStatisticsEventMessage)));
   }
 
-  private de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.model.SessionStatisticsResultDTO buildResultDto() {
-    return new de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.model.SessionStatisticsResultDTO()
+  private SessionStatisticsResultDTO buildResultDto() {
+    return new SessionStatisticsResultDTO()
         .id(SESSION_ID)
         .isTeamSession(false)
         .agencyId(AGENCY_ID)
