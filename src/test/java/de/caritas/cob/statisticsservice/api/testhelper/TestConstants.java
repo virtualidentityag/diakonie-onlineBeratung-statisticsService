@@ -1,9 +1,12 @@
 package de.caritas.cob.statisticsservice.api.testhelper;
 
 import de.caritas.cob.statisticsservice.api.model.ConsultantStatisticsResponseDTO;
+import de.caritas.cob.statisticsservice.api.model.RegistrationStatisticsListResponseDTO;
+import de.caritas.cob.statisticsservice.api.model.RegistrationStatisticsResponseDTO;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class TestConstants {
 
@@ -31,4 +34,28 @@ public class TestConstants {
           .numberOfSentMessages(10L)
           .numberOfAssignedSessions(2L)
           .videoCallDuration(9800L);
+
+  public static RegistrationStatisticsListResponseDTO REGISTRATION_STATISTICS_LIST_RESPONSE_DTO =
+      new RegistrationStatisticsListResponseDTO()
+          .addRegistrationStatisticsItem(
+              new RegistrationStatisticsResponseDTO()
+                  .userId(ASKER_ID)
+                  .registrationDate("2022-08-15T21:11:29")
+                  .age(25)
+                  .gender("FEMALE")
+                  .counsellingRelation("SELF_COUNSELLING")
+                  .mainTopicInternalAttribute("angeho01")
+                  .topicsInternalAttributes(List.of("angeho01", "angeho13"))
+                  .postalCode("99999")
+          ).addRegistrationStatisticsItem(new RegistrationStatisticsResponseDTO()
+                  .userId(ASKER_ID)
+                  .registrationDate("2022-08-15T21:11:29")
+                  .age(26)
+                  .gender("MALE")
+                  .counsellingRelation("SELF_COUNSELLING")
+                  .mainTopicInternalAttribute("angeho13")
+                  .topicsInternalAttributes(List.of("angeho01", "angeho13"))
+                  .postalCode("11111")
+          );
+
 }
