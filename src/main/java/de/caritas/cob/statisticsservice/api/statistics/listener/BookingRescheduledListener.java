@@ -3,8 +3,10 @@ package de.caritas.cob.statisticsservice.api.statistics.listener;
 import de.caritas.cob.statisticsservice.api.model.BookingCreatedStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.model.BookingRescheduledStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.User;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingCreatedMetaData;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingRescheduledMetaData;
+import java.time.Instant;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -29,12 +31,22 @@ public class BookingRescheduledListener {
       containerFactory = "simpleRabbitListenerContainerFactory")
   public void receiveMessage(BookingRescheduledStatisticsEventMessage eventMessage) {
 
-    StatisticsEvent statisticsEvent = new StatisticsEvent();
+    StatisticsEvent statisticsEvent = StatisticsEvent.builder()
+        .eventType(eventMessage.getEventType())
+        .timestamp(eventMessage.getTimestamp().toInstant())
+        .user(User.builder().userRole(eventMessage.getUserRole()).id(eventMessage.getUserId()).build())
+        .metaData(buildMetaData(eventMessage))
+        .build();
 
     mongoTemplate.insert(statisticsEvent);
   }
 
   private BookingRescheduledMetaData buildMetaData(BookingRescheduledStatisticsEventMessage eventMessage) {
-    return BookingRescheduledMetaData.builder().build();
+    return BookingRescheduledMetaData.builder()
+        .startTime(Instant.parse(eventMessage.getStartTime()))
+        .endTime(Instant.parse(eventMessage.getEndTime()))
+        .uid(eventMessage.getUid())
+        .bookingId(eventMessage.getBookingId())
+        .build();
   }
 }

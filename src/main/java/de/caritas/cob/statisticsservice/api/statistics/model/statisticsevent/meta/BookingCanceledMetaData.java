@@ -11,4 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookingCanceledMetaData {
 
+  private String uid;
+  private Integer bookingId;
+
 }
