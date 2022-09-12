@@ -83,6 +83,9 @@ components:
         - "CREATE_MESSAGE"
         - "START_VIDEO_CALL"
         - "STOP_VIDEO_CALL"
+        - "BOOKING_CREATED"
+        - "BOOKING_RESCHEDULED"
+        - "BOOKING_CANCELLED"
 
     UserRole:
       type: string
@@ -175,6 +178,51 @@ components:
           type: string
           description: The uuid of the video call
           example: 123e4567-e89b-12d3-a456-556642440000
+
+    BookingCreatedStatisticsEventMessage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/StatisticsEventMessage'
+        - type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+        uid:
+          type: string
+        bookingId:
+          type: integer
+
+    BookingRescheduledStatisticsEventMessage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/StatisticsEventMessage'
+        - type: object
+      properties:
+        startTime:
+          type: string
+        endTime:
+          type: string
+        uid:
+          type: string
+        bookingId:
+          type: integer
+
+    BookingCanceledStatisticsEventMessage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/StatisticsEventMessage'
+        - type: object
+      properties:
+        uid:
+          type: string
+        bookingId:
+          type: integer
 
   securitySchemes:
     Bearer:
