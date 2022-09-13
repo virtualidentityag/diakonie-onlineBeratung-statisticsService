@@ -1,10 +1,8 @@
 package de.caritas.cob.statisticsservice.api.statistics.listener;
 
-import de.caritas.cob.statisticsservice.api.model.BookingCreatedStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.model.BookingRescheduledStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.User;
-import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingCreatedMetaData;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingRescheduledMetaData;
 import java.time.Instant;
 import lombok.NonNull;
@@ -13,7 +11,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-/** AMQP Listener for create message statistics event. */
+/**
+ * AMQP Listener for create message statistics event.
+ */
 @Service
 @RequiredArgsConstructor
 public class BookingRescheduledListener {
@@ -34,14 +34,16 @@ public class BookingRescheduledListener {
     StatisticsEvent statisticsEvent = StatisticsEvent.builder()
         .eventType(eventMessage.getEventType())
         .timestamp(eventMessage.getTimestamp().toInstant())
-        .user(User.builder().userRole(eventMessage.getUserRole()).id(eventMessage.getUserId()).build())
+        .user(User.builder().userRole(eventMessage.getUserRole()).id(eventMessage.getUserId())
+            .build())
         .metaData(buildMetaData(eventMessage))
         .build();
 
     mongoTemplate.insert(statisticsEvent);
   }
 
-  private BookingRescheduledMetaData buildMetaData(BookingRescheduledStatisticsEventMessage eventMessage) {
+  private BookingRescheduledMetaData buildMetaData(
+      BookingRescheduledStatisticsEventMessage eventMessage) {
     return BookingRescheduledMetaData.builder()
         .startTime(Instant.parse(eventMessage.getStartTime()))
         .endTime(Instant.parse(eventMessage.getEndTime()))

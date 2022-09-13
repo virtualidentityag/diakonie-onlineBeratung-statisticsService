@@ -1,18 +1,18 @@
 package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.BookingCanceledStatisticsEventMessage;
-import de.caritas.cob.statisticsservice.api.model.BookingRescheduledStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.User;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingCanceledMetaData;
-import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingRescheduledMetaData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-/** AMQP Listener for create message statistics event. */
+/**
+ * AMQP Listener for create message statistics event.
+ */
 @Service
 @RequiredArgsConstructor
 public class BookingCanceledListener {
@@ -33,14 +33,16 @@ public class BookingCanceledListener {
     StatisticsEvent statisticsEvent = StatisticsEvent.builder()
         .eventType(eventMessage.getEventType())
         .timestamp(eventMessage.getTimestamp().toInstant())
-        .user(User.builder().userRole(eventMessage.getUserRole()).id(eventMessage.getUserId()).build())
+        .user(User.builder().userRole(eventMessage.getUserRole()).id(eventMessage.getUserId())
+            .build())
         .metaData(buildMetaData(eventMessage))
         .build();
 
     mongoTemplate.insert(statisticsEvent);
   }
 
-  private BookingCanceledMetaData buildMetaData(BookingCanceledStatisticsEventMessage eventMessage) {
+  private BookingCanceledMetaData buildMetaData(
+      BookingCanceledStatisticsEventMessage eventMessage) {
     return BookingCanceledMetaData.builder()
         .uid(eventMessage.getUid())
         .bookingId(eventMessage.getBookingId())
