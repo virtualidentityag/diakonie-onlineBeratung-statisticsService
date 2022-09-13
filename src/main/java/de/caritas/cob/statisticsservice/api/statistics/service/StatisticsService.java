@@ -62,6 +62,7 @@ public class StatisticsService {
         .numberOfSessionsWhereConsultantWasActive(
             extractActiveNumberOfSessions(dateFromConverted, dateToConverted))
         .videoCallDuration(extractVideoCallDuration(dateFromConverted, dateToConverted))
+        .numberOfAppointments(extractNumberOfDoneAppointments(dateFromConverted, dateToConverted))
         .startDate(dateFrom)
         .endDate(dateTo);
   }
@@ -69,6 +70,15 @@ public class StatisticsService {
   private long extractActiveNumberOfSessions(Instant dateFromConverted, Instant dateToConverted) {
     var result = statisticsEventRepository
         .calculateNumbersOfSessionsWhereUserWasActive(
+            authenticatedUser.getUserId(),
+            dateFromConverted,
+            dateToConverted);
+    return nonNull(result) ? result.getTotalCount() : 0L;
+  }
+
+  private long extractNumberOfDoneAppointments(Instant dateFromConverted, Instant dateToConverted) {
+    var result = statisticsEventRepository
+        .calculateNumbersOfDoneAppointments(
             authenticatedUser.getUserId(),
             dateFromConverted,
             dateToConverted);
