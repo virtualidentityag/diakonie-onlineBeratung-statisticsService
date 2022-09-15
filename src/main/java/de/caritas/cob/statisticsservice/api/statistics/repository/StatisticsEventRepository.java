@@ -79,11 +79,6 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
   @Query(value = "{'user._id': ?0, 'eventType': 'ASSIGN_SESSION', 'timestamp':{$gte:?1,$lte:?2}}", count = true)
   long calculateNumberOfAssignedSessionsForUser(String userId, Instant dateFrom, Instant dateTo);
 
-  /**
-   *  Return list of all registration statistics
-   *
-   * @return List of all registration statistics
-   */
   @Query(value = "{'eventType': 'REGISTRATION'}")
   List<StatisticsEvent> getAllRegistrationStatistics();
 }

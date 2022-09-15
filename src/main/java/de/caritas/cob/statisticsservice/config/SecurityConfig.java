@@ -2,6 +2,7 @@ package de.caritas.cob.statisticsservice.config;
 
 import static de.caritas.cob.statisticsservice.api.authorization.Authority.CONSULTANT;
 import static de.caritas.cob.statisticsservice.api.authorization.Authority.SINGLE_TENANT_ADMIN;
+import static de.caritas.cob.statisticsservice.api.authorization.Authority.TENANT_ADMIN;
 
 import de.caritas.cob.statisticsservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.statisticsservice.filter.StatelessCsrfFilter;
@@ -71,7 +72,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy()).and().authorizeRequests()
         .antMatchers(WHITE_LIST).permitAll()
         .antMatchers("/statistics/consultant").hasAuthority(CONSULTANT.getAuthority())
-        .antMatchers("/statistics/registration").hasAuthority(SINGLE_TENANT_ADMIN.getAuthority())
+        .antMatchers("/statistics/registration").hasAnyAuthority(SINGLE_TENANT_ADMIN.getAuthority(),
+            TENANT_ADMIN.getAuthority())
         .anyRequest().denyAll();
   }
 
