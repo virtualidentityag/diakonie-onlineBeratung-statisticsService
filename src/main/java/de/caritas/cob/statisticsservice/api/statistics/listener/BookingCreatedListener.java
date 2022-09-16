@@ -50,6 +50,7 @@ public class BookingCreatedListener {
         .endTime(Instant.parse(eventMessage.getEndTime()))
         .uid(eventMessage.getUid())
         .bookingId(eventMessage.getBookingId())
+        .currentBookingId(eventMessage.getBookingId())
         .build();
   }
 }

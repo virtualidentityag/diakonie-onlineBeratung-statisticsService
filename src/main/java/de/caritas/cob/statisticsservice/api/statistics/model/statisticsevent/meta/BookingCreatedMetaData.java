@@ -18,5 +18,6 @@ public class BookingCreatedMetaData {
   private Instant endTime;
   private String uid;
   private Integer bookingId;
+  private Integer currentBookingId;
 
 }

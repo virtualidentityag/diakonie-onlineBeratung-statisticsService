@@ -16,5 +16,6 @@ public class BookingRescheduledMetaData {
   private Instant endTime;
   private String uid;
   private Integer bookingId;
+  private Integer currentBookingId;
 
 }

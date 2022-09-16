@@ -9,6 +9,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,6 +43,12 @@ public class BookingRescheduledListener {
         .build();
 
     mongoTemplate.insert(statisticsEvent);
+    mongoTemplate.updateMulti(
+        new Query(new Criteria().orOperator(Criteria.where("metaData.bookingId").is(eventMessage.getPrevBookingId()),
+            Criteria.where("metaData.currentBookingId").is(eventMessage.getPrevBookingId()))),
+        new Update().set("metaData.currentBookingId", eventMessage.getBookingId()),
+        StatisticsEvent.class
+    );
   }
 
   private BookingRescheduledMetaData buildMetaData(
@@ -49,6 +58,7 @@ public class BookingRescheduledListener {
         .endTime(Instant.parse(eventMessage.getEndTime()))
         .uid(eventMessage.getUid())
         .bookingId(eventMessage.getBookingId())
+        .currentBookingId(eventMessage.getBookingId())
         .build();
   }
 }
