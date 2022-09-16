@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.caritas.cob.statisticsservice.api.helper.RegistrationStatisticsDTOConverter;
 import de.caritas.cob.statisticsservice.api.model.EventType;
 import de.caritas.cob.statisticsservice.api.model.UserRole;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.Agency;
@@ -20,19 +21,26 @@ import de.caritas.cob.statisticsservice.api.statistics.repository.StatisticsEven
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegistrationStatisticsServiceTest {
 
-  @InjectMocks
   RegistrationStatisticsService registrationStatisticsService;
   @Mock
   StatisticsEventRepository statisticsEventRepository;
+  RegistrationStatisticsDTOConverter registrationStatisticsDTOConverter;
+
+  @Before
+  public void setup() {
+    registrationStatisticsDTOConverter = new RegistrationStatisticsDTOConverter();
+    registrationStatisticsService = new RegistrationStatisticsService(statisticsEventRepository,
+        registrationStatisticsDTOConverter);
+  }
 
   @Test
   public void fetchRegistrationStatisticsData_Should_RetrieveRegistrationStatisticsDataViaRepository() {
