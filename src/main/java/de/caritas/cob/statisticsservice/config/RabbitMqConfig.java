@@ -47,9 +47,11 @@ public class RabbitMqConfig {
   public static final String QUEUE_NAME_CREATE_MESSAGE = QUEUE_PREFIX + EventType.CREATE_MESSAGE;
   public static final String QUEUE_NAME_START_VIDEO_CALL = QUEUE_PREFIX + EventType.START_VIDEO_CALL;
   public static final String QUEUE_NAME_STOP_VIDEO_CALL = QUEUE_PREFIX + EventType.STOP_VIDEO_CALL;
+  public static final String QUEUE_NAME_REGISTRATION = QUEUE_PREFIX + EventType.REGISTRATION;
   public static final String QUEUE_NAME_BOOKING_CREATED = QUEUE_PREFIX + EventType.BOOKING_CREATED;
   public static final String QUEUE_NAME_BOOKING_RESCHEDULED = QUEUE_PREFIX + EventType.BOOKING_RESCHEDULED;
   public static final String QUEUE_NAME_BOOKING_CANCELED = QUEUE_PREFIX + EventType.BOOKING_CANCELLED;
+
   @Value("${spring.rabbitmq.listener.simple.retry.max-attempts}")
   private int retryMaxAttempts;
   @Value("${spring.rabbitmq.listener.simple.retry.initial-interval}")
@@ -67,9 +69,11 @@ public class RabbitMqConfig {
     var createMessageStatisticsEventQueue = buildQueue(QUEUE_NAME_CREATE_MESSAGE);
     var startVideoCallStatisticsEventQueue = buildQueue(QUEUE_NAME_START_VIDEO_CALL);
     var stopVideoCallStatisticsEventQueue = buildQueue(QUEUE_NAME_STOP_VIDEO_CALL);
+    var registrationStatisticsEventQueue = buildQueue(QUEUE_NAME_REGISTRATION);
     var bookingCreatedStatisticsEventQueue = buildQueue(QUEUE_NAME_BOOKING_CREATED);
     var bookingRescheduledStatisticsEventQueue = buildQueue(QUEUE_NAME_BOOKING_RESCHEDULED);
     var bookingCanceledStatisticsEventQueue = buildQueue(QUEUE_NAME_BOOKING_CANCELED);
+
     var deadLetterExchange = new DirectExchange(DEAD_LETTER_EXCHANGE_NAME, true, false);
     var topicExchange = new TopicExchange(STATISTICS_EXCHANGE_NAME, true, false);
 
@@ -94,10 +98,14 @@ public class RabbitMqConfig {
         BindingBuilder.bind(stopVideoCallStatisticsEventQueue)
             .to(topicExchange)
             .with(EventType.STOP_VIDEO_CALL),
+        registrationStatisticsEventQueue,
+        BindingBuilder.bind(registrationStatisticsEventQueue)
+            .to(topicExchange)
+            .with(EventType.REGISTRATION),
         bookingCreatedStatisticsEventQueue,
         BindingBuilder.bind(bookingCreatedStatisticsEventQueue)
-            .to(topicExchange)
-            .with(EventType.BOOKING_CREATED),
+        .to(topicExchange)
+        .with(EventType.BOOKING_CREATED),
         bookingRescheduledStatisticsEventQueue,
         BindingBuilder.bind(bookingRescheduledStatisticsEventQueue)
             .to(topicExchange)
