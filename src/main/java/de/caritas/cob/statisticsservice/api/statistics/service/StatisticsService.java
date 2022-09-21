@@ -81,7 +81,8 @@ public class StatisticsService {
         .calculateNumbersOfDoneAppointments(
             authenticatedUser.getUserId(),
             dateFromConverted,
-            dateToConverted);
+            dateToConverted,
+            Instant.now());
     return nonNull(result) ? result.getTotalCount() : 0L;
   }
 

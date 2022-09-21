@@ -100,8 +100,8 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
           "{'$unwind': '$events'}",
           "{'$sort': {'events.timestamp': 1}}",
           "{'$group': {'_id': '$_id', 'events': {'$push': '$events'}}}",
-          "{'$match': {'$and': [{'events.0.startTime': {'$gte': ?1}}, {'events.0.startTime': {'$lte': ?2}}]}}",
+          "{'$match': {'$and': [{'events.0.endTime': {'$gte': ?1}}, {'events.0.endTime': {'$lte': ?2}}, {'events.0.endTime': {'$lte': ?3}}]}}",
           "{'$count': 'totalCount'}"
       })
-  Count calculateNumbersOfDoneAppointments(String userId, Instant dateFrom, Instant dateTo);
+  Count calculateNumbersOfDoneAppointments(String userId, Instant dateFrom, Instant dateTo, Instant now);
 }
