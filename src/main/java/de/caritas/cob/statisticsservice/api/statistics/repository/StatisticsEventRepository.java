@@ -84,7 +84,7 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
 
   /**
    * Calculate the number of done appointments.
-   * Done mean that the startTime or the startTime of the latest reschedule has been reached, and it was not canceled
+   * Done mean that the endTime of the appointment or the endTime of the latest reschedule has been reached, and it was not canceled
    *
    * @param userId the user id
    * @param dateFrom the start date of the period
