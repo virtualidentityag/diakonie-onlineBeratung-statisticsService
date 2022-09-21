@@ -94,13 +94,13 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
    */
   @Aggregation(
       pipeline = {
-          "{'$match': {'$and': [{'metaData.currentBookingId': {'$ne': null}}, {'user._id': {'$eq': ?1}}]}}",
+          "{'$match': {'$and': [{'metaData.currentBookingId': {'$ne': null}}, {'user._id': {'$eq': ?0}}]}}",
           "{'$group': {'_id': '$metaData.currentBookingId', 'events': {'$push': {'timestamp': '$timestamp', 'event': '$eventType', 'type': '$metaData.type', 'startTime': '$metaData.startTime', 'endTime': '$metaData.endTime'}}}}",
           "{'$match': {'events.event': {'$ne': 'BOOKING_CANCELED'}}}",
           "{'$unwind': '$events'}",
           "{'$sort': {'events.timestamp': 1}}",
           "{'$group': {'_id': '$_id', 'events': {'$push': '$events'}}}",
-          "{'$match': {'$and': [{'events.0.startTime': {'$gte': ?2}}, {'events.0.startTime': {'$lte': ?3}}]}}",
+          "{'$match': {'$and': [{'events.0.startTime': {'$gte': ?1}}, {'events.0.startTime': {'$lte': ?2}}]}}",
           "{'$count': 'totalCount'}"
       })
   Count calculateNumbersOfDoneAppointments(String userId, Instant dateFrom, Instant dateTo);
