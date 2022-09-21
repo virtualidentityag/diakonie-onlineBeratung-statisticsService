@@ -94,8 +94,8 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
    */
   @Aggregation(
       pipeline = {
-          "{'$match': {'$and': [{'metaData.bookingId': {'$ne': null}}, {'user._id': {'$eq': ?1}}]}}",
-          "{'$group': {'_id': '$metaData.bookingId', 'events': {'$push': {'timestamp': '$timestamp', 'event': '$eventType', 'type': '$metaData.type', 'startTime': '$metaData.startTime', 'endTime': '$metaData.endTime'}}}}",
+          "{'$match': {'$and': [{'metaData.currentBookingId': {'$ne': null}}, {'user._id': {'$eq': ?1}}]}}",
+          "{'$group': {'_id': '$metaData.currentBookingId', 'events': {'$push': {'timestamp': '$timestamp', 'event': '$eventType', 'type': '$metaData.type', 'startTime': '$metaData.startTime', 'endTime': '$metaData.endTime'}}}}",
           "{'$match': {'events.event': {'$ne': 'BOOKING_CANCELED'}}}",
           "{'$unwind': '$events'}",
           "{'$sort': {'events.timestamp': 1}}",
