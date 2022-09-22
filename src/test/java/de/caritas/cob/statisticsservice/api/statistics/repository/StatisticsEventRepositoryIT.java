@@ -4,6 +4,7 @@ import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.CONS
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.DATE_FROM;
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.DATE_TO;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -123,6 +124,14 @@ public class StatisticsEventRepositoryIT {
         statisticsEventRepository.calculateTimeInVideoCallsForUser(
             CONSULTANT_ID, currentDateTime, currentDateTime), nullValue());
   }
+
+  @Test
+  public void getAllRegistrationStatistics_Should_ReturnRegistrationStatistics() {
+
+    List<StatisticsEvent> allRegistrationStatistics = statisticsEventRepository.getAllRegistrationStatistics();
+    assertThat(allRegistrationStatistics, hasSize(2));
+  }
+
 
   /**
    * For some reason this test is failing on the event.0.startTime and event.0.endTime filters.
