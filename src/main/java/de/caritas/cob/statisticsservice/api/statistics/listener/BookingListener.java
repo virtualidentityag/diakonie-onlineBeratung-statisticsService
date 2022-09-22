@@ -13,7 +13,7 @@ public abstract class BookingListener {
 
   protected final @NonNull MongoTemplate mongoTemplate;
 
-  public BookingListener(@NonNull MongoTemplate mongoTemplate) {
+  protected BookingListener(@NonNull MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;
   }
 

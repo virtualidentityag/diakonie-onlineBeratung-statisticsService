@@ -132,13 +132,8 @@ public class StatisticsEventRepositoryIT {
     assertThat(allRegistrationStatistics, hasSize(2));
   }
 
-
-  /**
-   * For some reason this test is failing on the event.0.startTime and event.0.endTime filters.
-   * TODO: Find cause
-   */
   @Test
-  @Ignore
+  @Ignore // TODO: For some reason this test is failing on the event.0.startTime and event.0.endTime filters.
   public void calculateNumberOfDoneAppointmentsForConsultant_Should_ReturnCorrectNumberOfAppointments() {
     Count count = statisticsEventRepository.calculateNumbersOfDoneAppointments(CONSULTANT_ID,
         dateFromConverted, dateToConverted, dateToConverted);
