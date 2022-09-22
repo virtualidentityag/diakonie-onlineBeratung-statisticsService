@@ -133,7 +133,7 @@ public class StatisticsEventRepositoryIT {
   }
 
   @Test
-  @Ignore // TODO: For some reason this test is failing on the event.0.startTime and event.0.endTime filters.
+  @Ignore("For some reason this test is failing in this test scenario caused by the event.0.startTime and event.0.endTime filters.")
   public void calculateNumberOfDoneAppointmentsForConsultant_Should_ReturnCorrectNumberOfAppointments() {
     Count count = statisticsEventRepository.calculateNumbersOfDoneAppointments(CONSULTANT_ID,
         dateFromConverted, dateToConverted, dateToConverted);
