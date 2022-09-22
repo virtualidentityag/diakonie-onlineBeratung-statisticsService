@@ -24,7 +24,7 @@ public abstract class BookingListener {
    * @param prevBookingId ID of the previous, related event
    * @param newBookingId ID of the new change event
    */
-  protected void updateRelatedBookings(Integer prevBookingId, Integer newBookingId){
+  protected void updateRelatedBookings(Integer prevBookingId, Integer newBookingId) {
     mongoTemplate.updateMulti(
         new Query(new Criteria().orOperator(Criteria.where("metaData.bookingId").is(prevBookingId),
             Criteria.where("metaData.currentBookingId").is(prevBookingId))),
