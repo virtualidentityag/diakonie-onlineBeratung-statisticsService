@@ -94,14 +94,12 @@ public interface StatisticsEventRepository extends MongoRepository<StatisticsEve
    */
   @Aggregation(
       pipeline = {
-          "{'$match': {'$and': [{'metaData.currentBookingId': {'$ne': null}}, {'user._id': {'$eq': ?0}}]}}",
-          "{'$group': {'_id': '$metaData.currentBookingId', 'events': {'$push': {'timestamp': '$timestamp', 'event': '$eventType', 'type': '$metaData.type', 'startTime': '$metaData.startTime', 'endTime': '$metaData.endTime'}}}}",
-          "{'$match': {'events.event': {'$ne': 'BOOKING_CANCELED'}}}",
-          "{'$unwind': '$events'}",
-          "{'$sort': {'events.timestamp': 1}}",
-          "{'$group': {'_id': '$_id', 'events': {'$push': '$events'}}}",
-          "{'$match': {'$and': [{'events.0.endTime': {'$gte': ?1}}, {'events.0.endTime': {'$lte': ?2}}, {'events.0.endTime': {'$lte': ?3}}]}}",
+          "{'$match': {$and: [{'metaData.currentBookingId': {$ne: null}}, {'user._id': {$eq:?0}}]}}",
+          "{'$sort': {'timestamp': -1}}",
+          "{'$group': {'_id': '$metaData.currentBookingId','events': {'$push': {'timestamp': '$timestamp','event': '$eventType','type': '$metaData.type','startTime': '$metaData.startTime','endTime': '$metaData.endTime'}}}}",
+          "{'$match': {$and: [{'events.0.event': {'$ne': 'BOOKING_CANCELLED'}},  {'events.0.startTime': {$gte:?1}}, {'events.0.endTime': {$gte:?1}}, {'events.0.endTime': {$lte:?2}}, {'events.0.endTime': {$lte:?3}}]}}",
           "{'$count': 'totalCount'}"
-      })
+      }
+     )
   Count calculateNumbersOfDoneAppointments(String userId, Instant dateFrom, Instant dateTo, Instant now);
 }

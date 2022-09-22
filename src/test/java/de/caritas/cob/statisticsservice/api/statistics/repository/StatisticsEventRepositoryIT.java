@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.caritas.cob.statisticsservice.StatisticsServiceApplication;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.repository.StatisticsEventRepository.Count;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,7 +20,9 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import org.bson.Document;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,12 @@ public class StatisticsEventRepositoryIT {
             new TypeReference<>() {
             });
     mongoTemplate.insert(statisticEvents, MONGO_COLLECTION_NAME);
+    mongoTemplate.getDb().getCollection(MONGO_COLLECTION_NAME).aggregate(
+        List.of(new Document("$addFields",
+            new Document("metaData.endTime",
+                new Document("$toDate", "$metaData.endTime"))
+                .append("metaData.startTime",
+                    new Document("$toDate", "$metaData.startTime")))));
   }
 
   @Test
@@ -115,4 +124,16 @@ public class StatisticsEventRepositoryIT {
             CONSULTANT_ID, currentDateTime, currentDateTime), nullValue());
   }
 
+  /**
+   * For some reason this test is failing on the event.0.startTime and event.0.endTime filters.
+   * TODO: Find cause
+   */
+  @Test
+  @Ignore
+  public void calculateNumberOfDoneAppointmentsForConsultant_Should_ReturnCorrectNumberOfAppointments() {
+    Count count = statisticsEventRepository.calculateNumbersOfDoneAppointments(CONSULTANT_ID,
+        dateFromConverted, dateToConverted, dateToConverted);
+
+    assertThat(count.getTotalCount(), is(1L));
+  }
 }

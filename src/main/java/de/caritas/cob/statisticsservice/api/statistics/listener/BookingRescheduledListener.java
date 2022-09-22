@@ -6,22 +6,20 @@ import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.Use
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingRescheduledMetaData;
 import java.time.Instant;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 /**
  * AMQP Listener for create message statistics event.
  */
 @Service
-@RequiredArgsConstructor
-public class BookingRescheduledListener {
+public class BookingRescheduledListener extends BookingListener {
 
-  private final @NonNull MongoTemplate mongoTemplate;
+  public BookingRescheduledListener(
+      @NonNull MongoTemplate mongoTemplate) {
+    super(mongoTemplate);
+  }
 
   /**
    * Consumer for create message statics statistics event.
@@ -43,12 +41,7 @@ public class BookingRescheduledListener {
         .build();
 
     mongoTemplate.insert(statisticsEvent);
-    mongoTemplate.updateMulti(
-        new Query(new Criteria().orOperator(Criteria.where("metaData.bookingId").is(eventMessage.getPrevBookingId()),
-            Criteria.where("metaData.currentBookingId").is(eventMessage.getPrevBookingId()))),
-        new Update().set("metaData.currentBookingId", eventMessage.getBookingId()),
-        StatisticsEvent.class
-    );
+    this.updateRelatedBookings(eventMessage.getPrevBookingId(), eventMessage.getBookingId());
   }
 
   private BookingRescheduledMetaData buildMetaData(

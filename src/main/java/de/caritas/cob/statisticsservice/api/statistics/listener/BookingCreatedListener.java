@@ -6,7 +6,6 @@ import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.Use
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.BookingCreatedMetaData;
 import java.time.Instant;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -15,10 +14,11 @@ import org.springframework.stereotype.Service;
  * AMQP Listener for create message statistics event.
  */
 @Service
-@RequiredArgsConstructor
-public class BookingCreatedListener {
+public class BookingCreatedListener extends BookingListener {
 
-  private final @NonNull MongoTemplate mongoTemplate;
+  public BookingCreatedListener(@NonNull MongoTemplate mongoTemplate) {
+    super(mongoTemplate);
+  }
 
   /**
    * Consumer for create message statics statistics event.
