@@ -108,6 +108,7 @@ components:
       type: string
       enum:
         - "ASSIGN_SESSION"
+        - "ARCHIVE_SESSION"
         - "CREATE_MESSAGE"
         - "START_VIDEO_CALL"
         - "STOP_VIDEO_CALL"
@@ -145,6 +146,20 @@ components:
           example: "2021-01-30T08:30:00Z"
 
     AssignSessionStatisticsEventMessage:
+      type: object
+      required:
+        - sessionId
+      allOf:
+        - $ref: '#/components/schemas/StatisticsEventMessage'
+        - type: object
+      properties:
+        sessionId:
+          type: integer
+          format: int64
+          description: The id of the session
+          example: 12345
+
+    ArchiveSessionStatisticsEventMessage:
       type: object
       required:
         - sessionId
