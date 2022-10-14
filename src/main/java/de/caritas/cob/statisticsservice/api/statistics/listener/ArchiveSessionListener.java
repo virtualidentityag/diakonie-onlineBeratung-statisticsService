@@ -4,13 +4,16 @@ import de.caritas.cob.statisticsservice.api.model.ArchiveSessionStatisticsEventM
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEventBuilder;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.ArchiveMetaData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-/** AMQP Listener for archive session statistics event. */
+/**
+ * AMQP Listener for archive session statistics event.
+ */
 @Service
 @RequiredArgsConstructor
 public class ArchiveSessionListener {
@@ -31,14 +34,21 @@ public class ArchiveSessionListener {
 
     StatisticsEvent statisticsEvent =
         StatisticsEventBuilder.getInstance(
-            () ->
-                userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
+                () ->
+                    userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().toInstant())
             .withUserId(eventMessage.getUserId())
             .withUserRole(eventMessage.getUserRole())
+            .withMetaData(buildMetaData(eventMessage))
             .build();
 
     mongoTemplate.insert(statisticsEvent);
+  }
+
+  private ArchiveMetaData buildMetaData(ArchiveSessionStatisticsEventMessage eventMessage) {
+    return ArchiveMetaData.builder()
+        .endDate(eventMessage.getEndDate())
+        .build();
   }
 }

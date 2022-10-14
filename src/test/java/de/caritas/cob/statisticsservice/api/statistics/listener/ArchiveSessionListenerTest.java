@@ -7,7 +7,6 @@ import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.RC_G
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.SESSION_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,6 +17,7 @@ import de.caritas.cob.statisticsservice.api.model.EventType;
 import de.caritas.cob.statisticsservice.api.model.UserRole;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.ArchiveMetaData;
 import de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.model.SessionStatisticsResultDTO;
 import java.time.OffsetDateTime;
 import org.junit.Test;
@@ -33,8 +33,10 @@ public class ArchiveSessionListenerTest {
 
   @InjectMocks
   ArchiveSessionListener archiveSessionListener;
-  @Mock MongoTemplate mongoTemplate;
-  @Mock UserStatisticsService userStatisticsService;
+  @Mock
+  MongoTemplate mongoTemplate;
+  @Mock
+  UserStatisticsService userStatisticsService;
 
   @Test
   public void receiveMessage_Should_saveEventToMongoDb() {
@@ -57,7 +59,7 @@ public class ArchiveSessionListenerTest {
     assertThat(statisticsEvent.getTimestamp(), is(archiveSessionStatisticsEventMessage.getTimestamp().toInstant()));
     assertThat(statisticsEvent.getUser().getId(), is(archiveSessionStatisticsEventMessage.getUserId()));
     assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.CONSULTANT));
-    assertThat(statisticsEvent.getMetaData(), is(nullValue()));
+    assertThat(statisticsEvent.getMetaData(), is(buildMetaData()));
   }
 
   private SessionStatisticsResultDTO buildResultDto() {
@@ -75,6 +77,13 @@ public class ArchiveSessionListenerTest {
         .eventType(EventType.ASSIGN_SESSION)
         .userId(CONSULTANT_ID)
         .userRole(UserRole.CONSULTANT)
-        .timestamp(OffsetDateTime.now());
+        .timestamp(OffsetDateTime.now())
+        .endDate("2022-10-14T10:43:29");
+  }
+
+  private ArchiveMetaData buildMetaData() {
+    return ArchiveMetaData.builder()
+        .endDate("2022-10-14T10:43:29")
+        .build();
   }
 }
