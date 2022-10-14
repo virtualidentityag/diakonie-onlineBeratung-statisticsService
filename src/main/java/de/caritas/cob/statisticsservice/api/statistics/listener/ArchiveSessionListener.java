@@ -48,6 +48,7 @@ public class ArchiveSessionListener {
   private ArchiveMetaData buildMetaData(ArchiveSessionStatisticsEventMessage eventMessage) {
     return ArchiveMetaData.builder()
         .endDate(eventMessage.getEndDate())
+        .tenantId(eventMessage.getTenantId())
         .build();
   }
 }

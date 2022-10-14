@@ -8,4 +8,5 @@ import lombok.Data;
 public class ArchiveMetaData {
 
   private String endDate;
+  private Long tenantId;
 }
