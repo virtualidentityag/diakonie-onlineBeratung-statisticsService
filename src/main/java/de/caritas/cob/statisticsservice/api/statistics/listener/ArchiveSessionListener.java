@@ -34,8 +34,7 @@ public class ArchiveSessionListener {
 
     StatisticsEvent statisticsEvent =
         StatisticsEventBuilder.getInstance(
-                () ->
-                    userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
+            () -> userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().toInstant())
             .withUserId(eventMessage.getUserId())
