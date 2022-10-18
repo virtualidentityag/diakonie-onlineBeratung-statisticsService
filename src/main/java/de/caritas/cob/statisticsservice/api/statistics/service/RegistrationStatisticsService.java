@@ -7,6 +7,9 @@ import de.caritas.cob.statisticsservice.api.statistics.repository.StatisticsEven
 import de.caritas.cob.statisticsservice.api.statistics.repository.StatisticsEventTenantAwareRepository;
 import de.caritas.cob.statisticsservice.api.tenant.TenantContext;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +38,14 @@ public class RegistrationStatisticsService {
   }
 
   private RegistrationStatisticsListResponseDTO buildResponseDTO() {
+    Map<Long, StatisticsEvent> archiveSessionLookup = getArchiveSessionLookup();
+
     RegistrationStatisticsListResponseDTO registrationStatisticsList = new RegistrationStatisticsListResponseDTO();
-    List<StatisticsEvent> registrationStatisticsRaw = getAllRegistrationStatistics();
-    for (StatisticsEvent rawEvent : registrationStatisticsRaw) {
-      registrationStatisticsList.addRegistrationStatisticsItem(
-          registrationStatisticsDTOConverter.convertStatisticsEvent(rawEvent));
-    }
+    getAllRegistrationStatistics()
+        .stream()
+        .map(rawEvent -> registrationStatisticsDTOConverter.convertStatisticsEvent(rawEvent, archiveSessionLookup))
+        .forEach(registrationStatisticsList::addRegistrationStatisticsItem);
+
     return registrationStatisticsList;
   }
 
@@ -52,8 +57,16 @@ public class RegistrationStatisticsService {
     }
   }
 
+  private List<StatisticsEvent> getAllArchiveSessionEvents() {
+    if (isAllTenantAccessContext()) {
+      return getAllArchiveSessionEventsForAllTenants();
+    } else {
+      return getArchiveSessionEventsForCurrentTenant();
+    }
+  }
+
   private List<StatisticsEvent> getRegistrationStatisticsForCurrentTenant() {
-    log.info("Gathering registration statistics for tenant : ", TenantContext.getCurrentTenant());
+    log.info("Gathering registration statistics for tenant with id {}", TenantContext.getCurrentTenant());
     return statisticsEventTenantAwareRepository.getAllRegistrationStatistics(
         TenantContext.getCurrentTenant());
   }
@@ -63,10 +76,24 @@ public class RegistrationStatisticsService {
     return statisticsEventRepository.getAllRegistrationStatistics();
   }
 
+  private List<StatisticsEvent> getAllArchiveSessionEventsForAllTenants() {
+    log.info("Gathering archive sessions events for all tenants");
+    return statisticsEventRepository.getAllArchiveSessionEvents();
+  }
+
+  private List<StatisticsEvent> getArchiveSessionEventsForCurrentTenant() {
+    log.info("Gathering archive session events for tenant with id {}", TenantContext.getCurrentTenant());
+    return statisticsEventTenantAwareRepository.getAllArchiveSessionEvents(TenantContext.getCurrentTenant());
+  }
+
+  private Map<Long, StatisticsEvent> getArchiveSessionLookup() {
+    return getAllArchiveSessionEvents().stream()
+        .collect(Collectors.toMap(StatisticsEvent::getSessionId, Function.identity()));
+  }
+
+
   private boolean isAllTenantAccessContext() {
     return multitenancyIsDisabled() || TECHNICAL_TENANT_ID.equals(TenantContext.getCurrentTenant());
-
-
   }
 
   private boolean multitenancyIsDisabled() {
