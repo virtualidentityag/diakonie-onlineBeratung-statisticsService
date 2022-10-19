@@ -41,7 +41,7 @@ public class RegistrationStatisticsService {
     Map<Long, StatisticsEvent> archiveSessionLookup = getArchiveSessionLookup();
 
     RegistrationStatisticsListResponseDTO registrationStatisticsList = new RegistrationStatisticsListResponseDTO();
-    getAllRegistrationStatistics()
+    getRegistrationStatistics()
         .stream()
         .map(rawEvent -> registrationStatisticsDTOConverter.convertStatisticsEvent(rawEvent, archiveSessionLookup))
         .forEach(registrationStatisticsList::addRegistrationStatisticsItem);
@@ -49,17 +49,17 @@ public class RegistrationStatisticsService {
     return registrationStatisticsList;
   }
 
-  private List<StatisticsEvent> getAllRegistrationStatistics() {
+  private List<StatisticsEvent> getRegistrationStatistics() {
     if (isAllTenantAccessContext()) {
-      return getAllRegistrationStatisticsForAllTenants();
+      return getRegistrationStatisticsForAllTenants();
     } else {
       return getRegistrationStatisticsForCurrentTenant();
     }
   }
 
-  private List<StatisticsEvent> getAllArchiveSessionEvents() {
+  private List<StatisticsEvent> getArchiveSessionEvents() {
     if (isAllTenantAccessContext()) {
-      return getAllArchiveSessionEventsForAllTenants();
+      return getArchiveSessionEventsForAllTenants();
     } else {
       return getArchiveSessionEventsForCurrentTenant();
     }
@@ -71,12 +71,12 @@ public class RegistrationStatisticsService {
         TenantContext.getCurrentTenant());
   }
 
-  private List<StatisticsEvent> getAllRegistrationStatisticsForAllTenants() {
+  private List<StatisticsEvent> getRegistrationStatisticsForAllTenants() {
     log.info("Gathering registration statistics for all tenants");
     return statisticsEventRepository.getAllRegistrationStatistics();
   }
 
-  private List<StatisticsEvent> getAllArchiveSessionEventsForAllTenants() {
+  private List<StatisticsEvent> getArchiveSessionEventsForAllTenants() {
     log.info("Gathering archive sessions events for all tenants");
     return statisticsEventRepository.getAllArchiveSessionEvents();
   }
@@ -87,7 +87,7 @@ public class RegistrationStatisticsService {
   }
 
   private Map<Long, StatisticsEvent> getArchiveSessionLookup() {
-    return getAllArchiveSessionEvents().stream()
+    return getArchiveSessionEvents().stream()
         .collect(Collectors.toMap(StatisticsEvent::getSessionId, Function.identity()));
   }
 
