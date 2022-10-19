@@ -42,7 +42,7 @@ class RegistrationStatisticsDTOConverterTest {
   }
 
   @Test
-  void convertStatisticsEvent() {
+  void convertStatisticsEvent_Should_convertToRegistrationStatisticResponse() {
     // given
     givenValidStatisticEvent(1L);
 
