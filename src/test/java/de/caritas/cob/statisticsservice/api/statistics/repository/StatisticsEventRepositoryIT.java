@@ -135,7 +135,7 @@ public class StatisticsEventRepositoryIT {
   @Test
   public void getAllArchiveSessionEvents_Should_ReturnArchiveSessionEvents() {
     List<StatisticsEvent> allArchiveSessionEvents = statisticsEventRepository.getAllArchiveSessionEvents();
-    assertThat(allArchiveSessionEvents, hasSize(2));
+    assertThat(allArchiveSessionEvents, hasSize(3));
   }
 
   @Test

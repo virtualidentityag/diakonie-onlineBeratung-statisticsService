@@ -7,7 +7,7 @@ import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.TENA
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -93,7 +93,7 @@ class RegistrationStatisticsServiceTest {
     var result = registrationStatisticsService.fetchRegistrationStatisticsData();
 
     // then
-    verify(registrationStatisticsDTOConverter).convertStatisticsEvent(any(StatisticsEvent.class), anyMap());
+    verify(registrationStatisticsDTOConverter).convertStatisticsEvent(any(StatisticsEvent.class), anyList());
 
     assertThat(result.getRegistrationStatistics().get(0).getUserId(), is(ASKER_ID));
     assertThat(result.getRegistrationStatistics().get(0).getRegistrationDate(),
@@ -119,7 +119,7 @@ class RegistrationStatisticsServiceTest {
     var result = registrationStatisticsService.fetchRegistrationStatisticsData();
 
     // then
-    verify(registrationStatisticsDTOConverter).convertStatisticsEvent(any(StatisticsEvent.class), anyMap());
+    verify(registrationStatisticsDTOConverter).convertStatisticsEvent(any(StatisticsEvent.class), anyList());
 
     assertThat(result.getRegistrationStatistics().get(0).getEndDate(), is("end date 1"));
 
@@ -152,12 +152,12 @@ class RegistrationStatisticsServiceTest {
   }
 
   private void givenArchiveSessionEvents() {
-    List<StatisticsEvent> archiveEvents = List.of(archiveEvent(1L, "end date 1"),
-        archiveEvent(99L, "end date 2"));
+    List<StatisticsEvent> archiveEvents = List.of(archiveSessionEvent(1L, "end date 1"),
+        archiveSessionEvent(99L, "end date 2"));
     when(statisticsEventRepository.getAllArchiveSessionEvents()).thenReturn(archiveEvents);
   }
 
-  private StatisticsEvent archiveEvent(Long sessionId, String endDate) {
+  private StatisticsEvent archiveSessionEvent(Long sessionId, String endDate) {
     Object metaData = ArchiveMetaData.builder().endDate(endDate).build();
     return StatisticsEvent.builder().sessionId(sessionId).metaData(metaData).build();
   }

@@ -18,7 +18,6 @@ import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.met
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.RegistrationMetaData;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,12 +32,12 @@ class RegistrationStatisticsDTOConverterTest {
 
   private StatisticsEvent testEvent;
 
-  private Map<Long, StatisticsEvent> archiveSessionLookup;
+  private List<StatisticsEvent> archiveSessionEvents;
 
   @AfterEach
   void teardownEach() {
     testEvent = null;
-    archiveSessionLookup = null;
+    archiveSessionEvents = null;
   }
 
   @Test
@@ -66,7 +65,7 @@ class RegistrationStatisticsDTOConverterTest {
   }
 
   @Test
-  void convertStatisticsEvent_Should_notFail_When_archiveSessionLookupIsNull() {
+  void convertStatisticsEvent_Should_notFail_When_archiveSessionEventsAreNull() {
     // given
     givenValidStatisticEvent(1L);
 
@@ -79,28 +78,42 @@ class RegistrationStatisticsDTOConverterTest {
   }
 
   @Test
-  void convertStatisticsEvent_Should_addArchiveSessionEndDate() {
+  void convertStatisticsEvent_Should_addNewestArchiveSessionEndDate_When_multipleArchiveSessionEventsAreAvailable() {
     // given
     givenValidStatisticEvent(1L);
     givenValidArchiveStatisticEvents();
 
     // when
     RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(
-        testEvent, archiveSessionLookup);
+        testEvent, archiveSessionEvents);
 
     // then
-    assertThat(result.getEndDate(), is("end date 1"));
+    assertThat(result.getEndDate(), is("2 end date for session 1"));
   }
 
   @Test
-  void convertStatisticsEvent_Should_notAddArchiveSessionEndDate_When_noMatchingArchiveSessionIsAvailable() {
+  void convertStatisticsEvent_Should_addArchiveSessionEndDate_When_onlyOneArchiveSessionEventIsAvailable() {
     // given
     givenValidStatisticEvent(2L);
     givenValidArchiveStatisticEvents();
 
     // when
     RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(
-        testEvent, archiveSessionLookup);
+        testEvent, archiveSessionEvents);
+
+    // then
+    assertThat(result.getEndDate(), is("end date for session 2"));
+  }
+
+  @Test
+  void convertStatisticsEvent_Should_notAddArchiveSessionEndDate_When_noMatchingArchiveSessionEventIsAvailable() {
+    // given
+    givenValidStatisticEvent(99L);
+    givenValidArchiveStatisticEvents();
+
+    // when
+    RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(
+        testEvent, archiveSessionEvents);
 
     // then
     assertThat(result.getEndDate(), is(nullValue()));
@@ -129,12 +142,14 @@ class RegistrationStatisticsDTOConverterTest {
   }
 
   private void givenValidArchiveStatisticEvents() {
-    archiveSessionLookup = Map.of(1L, archiveEvent(1L, "end date 1"),
-        99L, archiveEvent(99L, "end date 2"));
+    archiveSessionEvents = List.of(archiveEvent(1L, "2022-10-17T10:00:00.00Z", "1 end date for session 1"),
+        archiveEvent(1L, "2022-10-18T10:00:00.00Z", "2 end date for session 1"),
+        archiveEvent(2L, "2022-10-18T10:00:00.00Z", "end date for session 2"),
+        archiveEvent(999L, "2022-10-19T10:00:00.00Z", "dummy end date"));
   }
 
-  private StatisticsEvent archiveEvent(Long sessionId, String endDate) {
+  private StatisticsEvent archiveEvent(Long sessionId, String timestampString, String endDate) {
     Object metaData = ArchiveMetaData.builder().endDate(endDate).build();
-    return StatisticsEvent.builder().sessionId(sessionId).metaData(metaData).build();
+    return StatisticsEvent.builder().timestamp(Instant.parse(timestampString)).sessionId(sessionId).metaData(metaData).build();
   }
 }

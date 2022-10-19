@@ -7,9 +7,6 @@ import de.caritas.cob.statisticsservice.api.statistics.repository.StatisticsEven
 import de.caritas.cob.statisticsservice.api.statistics.repository.StatisticsEventTenantAwareRepository;
 import de.caritas.cob.statisticsservice.api.tenant.TenantContext;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +35,12 @@ public class RegistrationStatisticsService {
   }
 
   private RegistrationStatisticsListResponseDTO buildResponseDTO() {
-    Map<Long, StatisticsEvent> archiveSessionLookup = getArchiveSessionLookup();
+    List<StatisticsEvent> archiveSessionEvents = getArchiveSessionEvents();
 
     RegistrationStatisticsListResponseDTO registrationStatisticsList = new RegistrationStatisticsListResponseDTO();
     getRegistrationStatistics()
         .stream()
-        .map(rawEvent -> registrationStatisticsDTOConverter.convertStatisticsEvent(rawEvent, archiveSessionLookup))
+        .map(rawEvent -> registrationStatisticsDTOConverter.convertStatisticsEvent(rawEvent, archiveSessionEvents))
         .forEach(registrationStatisticsList::addRegistrationStatisticsItem);
 
     return registrationStatisticsList;
@@ -85,12 +82,6 @@ public class RegistrationStatisticsService {
     log.info("Gathering archive session events for tenant with id {}", TenantContext.getCurrentTenant());
     return statisticsEventTenantAwareRepository.getAllArchiveSessionEvents(TenantContext.getCurrentTenant());
   }
-
-  private Map<Long, StatisticsEvent> getArchiveSessionLookup() {
-    return getArchiveSessionEvents().stream()
-        .collect(Collectors.toMap(StatisticsEvent::getSessionId, Function.identity()));
-  }
-
 
   private boolean isAllTenantAccessContext() {
     return multitenancyIsDisabled() || TECHNICAL_TENANT_ID.equals(TenantContext.getCurrentTenant());

@@ -63,6 +63,6 @@ public class StatisticsEventTenantAwareRepositoryIT {
   @Test
   public void getAllArchiveSessionEvents_Should_ReturnArchiveSessionEventsFilteredByTenantId() {
     List<StatisticsEvent> allArchiveSessionEvents = statisticsEventTenantAwareRepository.getAllArchiveSessionEvents(1L);
-    assertThat(allArchiveSessionEvents, hasSize(1));
+    assertThat(allArchiveSessionEvents, hasSize(2));
   }
 }
