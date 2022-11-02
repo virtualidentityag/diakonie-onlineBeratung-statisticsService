@@ -27,8 +27,10 @@
     <keycloak.version>17.0.0</keycloak.version>
     <!-- force at least version 2.16 due to https://logging.apache.org/log4j/2.x/security.html -->
     <log4j.version>2.16.0</log4j.version>
-    <openapi.generator.maven.version>6.2.0</openapi.generator.maven.version>
+    <openapi-generator-maven.version>6.2.0</openapi-generator-maven.version>
     <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
+    <spring-data-mongodb.version>3.3.5</spring-data-mongodb.version>
+    <spring-security.version>5.7.3</spring-security.version>
   </properties>
 
   <dependencies>
@@ -40,6 +42,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>${spring-security.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -58,6 +65,11 @@
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-mongodb</artifactId>
+      <version>${spring-data-mongodb.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>6.1.6.Final</version>
@@ -67,7 +79,7 @@
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>
-      <version>${openapi.generator.maven.version}</version>
+      <version>${openapi-generator-maven.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
