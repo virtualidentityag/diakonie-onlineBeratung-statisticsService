@@ -1,6 +1,7 @@
 package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.StartVideoCallStatisticsEventMessage;
+import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEventBuilder;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.StartVideoCallMetaData;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.VideoCallStatus;
@@ -12,12 +13,15 @@ import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 
+import static java.util.Objects.isNull;
+
 /** AMQP Listener for start video call message statistics event. */
 @Service
 @RequiredArgsConstructor
 public class StartVideoCallListener {
 
   private final @NonNull MongoTemplate mongoTemplate;
+  private final @NonNull UserStatisticsService userStatisticsService;
 
   /**
    * Consumer for start video call statics statistics event.
@@ -29,8 +33,12 @@ public class StartVideoCallListener {
       queues = "#{rabbitMqConfig.QUEUE_NAME_START_VIDEO_CALL}",
       containerFactory = "simpleRabbitListenerContainerFactory")
   public void receiveMessage(StartVideoCallStatisticsEventMessage eventMessage) {
-    var statisticsEvent =
-        StatisticsEventBuilder.getInstance()
+    var sessionId = eventMessage.getSessionId();
+    var statisticsEventBuilder = isNull(sessionId)
+            ? StatisticsEventBuilder.getInstance()
+            : StatisticsEventBuilder.getInstance(() -> userStatisticsService.retrieveSessionViaSessionId(sessionId));
+
+    var statisticsEvent = statisticsEventBuilder
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().truncatedTo(ChronoUnit.SECONDS).toInstant())
             .withUserId(eventMessage.getUserId())
