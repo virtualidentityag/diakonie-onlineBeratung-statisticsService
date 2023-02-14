@@ -56,7 +56,7 @@ public class StopVideoCallListener {
   private Query buildQuery(String videoCallUuid) {
     return new Query().addCriteria(
             Criteria.where("metaData.videoCallUuid").is(videoCallUuid)
-                    .and("status").is(VideoCallStatus.ONGOING.toString())
+                    .and("metaData.status").is(VideoCallStatus.ONGOING.toString())
     );
   }
 
