@@ -8,7 +8,7 @@ paths:
     get:
       tags:
         - healthcheck-controller
-      summary: 'Returns statistical data for a consultant. [Authorization: consultant]'
+      summary: 'Returns healthcheck data [Authorization: none]'
       operationId: getHealthcheck
       responses:
         200:
@@ -23,7 +23,7 @@ paths:
     get:
       tags:
         - healthcheck-controller
-      summary: 'Returns statistical data for a consultant. [Authorization: consultant]'
+      summary: 'Returns healtcheck data, liveness probe [Authorization: none]'
       operationId: getHealthcheckLiveness
       responses:
         200:
@@ -39,7 +39,7 @@ paths:
     get:
       tags:
         - healthcheck-controller
-      summary: 'Returns statistical data for a consultant. [Authorization: consultant]'
+      summary: 'Returns healtcheck data, readiness probe [Authorization: none]'
       operationId: getHealthcheckReadiness
       responses:
         200:
