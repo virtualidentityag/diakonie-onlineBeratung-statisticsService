@@ -1,7 +1,6 @@
 openapi: 3.0.1
 info:
   title: Healthcheck APIs
-  description: This information will be replaced by the SpringFox config information
   version: 0.0.1
 paths:
   /healthcheck/health:
