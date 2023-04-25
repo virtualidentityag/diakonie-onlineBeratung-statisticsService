@@ -11,9 +11,6 @@ import de.caritas.cob.statisticsservice.StatisticsServiceApplication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -24,9 +21,8 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(classes = StatisticsServiceApplication.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @TestPropertySource(properties = "multitenancy.enabled=true")
-@EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @AutoConfigureMockMvc
-class ActuatorControllerIT {
+class HealthcheckControllerIT {
 
   @Autowired private WebApplicationContext context;
 
@@ -40,19 +36,25 @@ class ActuatorControllerIT {
   @Test
   void getHealtcheck_Should_returnHealtcheck() throws Exception {
     mockMvc
-        .perform(get("/actuator/health").contentType(APPLICATION_JSON))
+        .perform(get("/healthcheck/health").contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("status", is("UP")));
   }
 
   @Test
-  void getHealtcheck_Should_return403ByCsrfRulesForEndpointsNotExposed() throws Exception {
+  void getHealtcheck_Should_returnHealtcheckLiveness() throws Exception {
     mockMvc
-        .perform(get("/actuator/env").contentType(APPLICATION_JSON))
-        .andExpect(status().isForbidden());
-
-    mockMvc
-        .perform(get("/actuator/beans").contentType(APPLICATION_JSON))
-        .andExpect(status().isForbidden());
+        .perform(get("/healthcheck/health/liveness").contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("status", is("UP")));
   }
+
+  @Test
+  void getHealtcheck_Should_returnHealtcheckReadiness() throws Exception {
+    mockMvc
+        .perform(get("/healthcheck/health/liveness").contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("status", is("UP")));
+  }
+
 }
