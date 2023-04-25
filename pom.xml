@@ -208,7 +208,6 @@
       <groupId>de.flapdoodle.embed</groupId>
       <artifactId>de.flapdoodle.embed.mongo</artifactId>
       <scope>test</scope>
-      <version>2.2.0</version>
     </dependency>
 
     <dependency>
