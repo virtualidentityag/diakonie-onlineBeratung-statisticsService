@@ -310,9 +310,6 @@ components:
             sendFurtherStepsMessage:
               type: boolean
               example: true
-            sendSaveSessionDataMessage:
-              type: boolean
-              example: false
             sessionDataInitializing:
               allOf:
                 - $ref: '#/components/schemas/SessionDataInitializingDTO'
@@ -680,9 +677,6 @@ components:
         sendFurtherStepsMessage:
           type: boolean
           example: true
-        sendSaveSessionDataMessage:
-          type: boolean
-          example: false
         welcomeMessage:
           allOf:
             - $ref: '#/components/schemas/WelcomeMessageDTO'
