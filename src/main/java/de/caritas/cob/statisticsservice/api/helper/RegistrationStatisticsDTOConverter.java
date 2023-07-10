@@ -21,12 +21,15 @@ public class RegistrationStatisticsDTOConverter {
         .userId(rawEvent.getUser().getId())
         .registrationDate(metadata.getRegistrationDate())
         .age(metadata.getAge())
+        .tenantName(metadata.getTenantName())
+        .agencyName(metadata.getAgencyName())
         .gender(metadata.getGender())
         .counsellingRelation(metadata.getCounsellingRelation())
         .mainTopicInternalAttribute(metadata.getMainTopicInternalAttribute())
         .topicsInternalAttributes(metadata.getTopicsInternalAttributes())
         .endDate(findEndDate(rawEvent.getSessionId(), archiveSessionEvents))
-        .postalCode(metadata.getPostalCode());
+        .postalCode(metadata.getPostalCode())
+        .referer(metadata.getReferer());
   }
 
   private String findEndDate(Long sessionId, List<StatisticsEvent> archiveSessionEvents) {

@@ -62,6 +62,12 @@ class RegistrationStatisticsDTOConverterTest {
     assertThat(result.getPostalCode(), is("12345"));
     assertThat(result.getCounsellingRelation(),
         is("SELF_COUNSELLING"));
+    assertThat(result.getTenantName(),
+        is("tenantName"));
+    assertThat(result.getAgencyName(),
+        is("agencyName"));
+    assertThat(result.getReferer(),
+        is("aReferer"));
   }
 
   @Test
@@ -129,6 +135,9 @@ class RegistrationStatisticsDTOConverterTest {
         .postalCode("12345")
         .tenantId(1L)
         .counsellingRelation("SELF_COUNSELLING")
+        .tenantName("tenantName")
+        .agencyName("agencyName")
+        .referer("aReferer")
         .build();
     testEvent = StatisticsEvent.builder()
         .sessionId(sessionId)
