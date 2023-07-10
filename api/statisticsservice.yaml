@@ -207,7 +207,7 @@ components:
           type: string
           description: The keycloak id of the consultant
           example: d63f4cc0-215d-40e2-a866-2d3e910f0590
-        deletionDate:
+        deleteDate:
           type: string
           example: '2022-08-15T21:11:29'
 

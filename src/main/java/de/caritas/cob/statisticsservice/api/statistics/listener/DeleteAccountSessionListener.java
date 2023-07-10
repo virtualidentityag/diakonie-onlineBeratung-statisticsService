@@ -1,11 +1,11 @@
 package de.caritas.cob.statisticsservice.api.statistics.listener;
 
 import de.caritas.cob.statisticsservice.api.model.ArchiveSessionStatisticsEventMessage;
+import de.caritas.cob.statisticsservice.api.model.DeleteAccountStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
-import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEventBuilder;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.User;
-import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.ArchiveMetaData;
+import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.DeleteAccountMetaData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class AccountDeletionSessionListener {
+public class DeleteAccountSessionListener {
 
   private final @NonNull MongoTemplate mongoTemplate;
   private final @NonNull UserStatisticsService userStatisticsService;
@@ -31,7 +31,7 @@ public class AccountDeletionSessionListener {
       id = "delete-account-event-listener",
       queues = "#{rabbitMqConfig.QUEUE_NAME_DELETE_ACCOUNT}",
       containerFactory = "simpleRabbitListenerContainerFactory")
-  public void receiveMessage(ArchiveSessionStatisticsEventMessage eventMessage) {
+  public void receiveMessage(DeleteAccountStatisticsEventMessage eventMessage) {
 
     StatisticsEvent statisticsEvent = StatisticsEvent.builder()
         .eventType(eventMessage.getEventType())
@@ -44,9 +44,9 @@ public class AccountDeletionSessionListener {
     mongoTemplate.insert(statisticsEvent);
   }
 
-  private ArchiveMetaData buildMetaData(ArchiveSessionStatisticsEventMessage eventMessage) {
-    return ArchiveMetaData.builder()
-        .endDate(eventMessage.getEndDate())
+  private DeleteAccountMetaData buildMetaData(DeleteAccountStatisticsEventMessage eventMessage) {
+    return DeleteAccountMetaData.builder()
+        .deleteDate(eventMessage.getDeleteDate())
         .tenantId(eventMessage.getTenantId())
         .build();
   }
