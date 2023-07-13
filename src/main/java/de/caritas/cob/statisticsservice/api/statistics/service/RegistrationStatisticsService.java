@@ -77,7 +77,7 @@ public class RegistrationStatisticsService {
   }
 
   private List<StatisticsEvent> getDeleteAccountEventsForCurrentTenant() {
-    log.info("Gathering delete account events for all tenants");
+    log.info("Gathering delete account events for current tenant");
     return statisticsEventTenantAwareRepository.getAllDeleteAccountSessionEvents(TenantContext.getCurrentTenant());
   }
 
