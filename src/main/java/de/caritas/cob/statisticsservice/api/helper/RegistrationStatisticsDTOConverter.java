@@ -40,7 +40,7 @@ public class RegistrationStatisticsDTOConverter {
   }
 
   private String findDeleteAccountDate(String userId, List<StatisticsEvent> deleteAccountEvents) {
-    return nonNull(deleteAccountEvents) ? deleteAccountEvents.stream()
+    return deleteAccountEvents != null ? deleteAccountEvents.stream()
         .filter(event -> event.getUser() != null && event.getUser().getId().equals(userId))
         .map(event -> ((DeleteAccountMetaData) event.getMetaData()).getDeleteDate())
         .findFirst().orElse(null) : null;
