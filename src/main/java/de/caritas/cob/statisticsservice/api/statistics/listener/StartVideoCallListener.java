@@ -57,7 +57,6 @@ public class StartVideoCallListener {
         .timestampStop(null)
         .status(VideoCallStatus.ONGOING)
         .adviceSeekerId(eventMessage.getAdviceSeekerId())
-        .tenantId(eventMessage.getTenantId())
         .build();
   }
 }
