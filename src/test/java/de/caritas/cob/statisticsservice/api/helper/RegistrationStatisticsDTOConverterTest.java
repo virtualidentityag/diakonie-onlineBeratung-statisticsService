@@ -7,6 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.statisticsservice.api.model.EventType;
 import de.caritas.cob.statisticsservice.api.model.RegistrationStatisticsResponseDTO;
 import de.caritas.cob.statisticsservice.api.model.UserRole;
@@ -19,6 +20,7 @@ import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.met
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.DeleteAccountMetaData;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.RegistrationMetaData;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +74,47 @@ class RegistrationStatisticsDTOConverterTest {
     assertThat(result.getReferer(),
         is("aReferer"));
   }
+
+  @Test
+  void convertStatisticsEvent_Should_convertToRegistrationStatisticResponseWithoutErrorIfMetadataIsLinkedHashMap() {
+    // given
+    givenValidStatisticEvent(1L);
+
+    var videoCallStartedEvent = StatisticsEvent.builder()
+        .sessionId(1L)
+        .eventType(EventType.REGISTRATION)
+        .user(User.builder().userRole(UserRole.ASKER).id(ASKER_ID).build())
+        .consultingType(ConsultingType.builder().id(CONSULTING_TYPE_ID).build())
+        .agency(Agency.builder().id(AGENCY_ID).build())
+        .timestamp(Instant.now())
+        .metaData(new LinkedHashMap<>())
+        .build();
+
+    var statisticEventsContainer = StatisticEventsContainer.builder().videoCallStartedEvents(Lists.newArrayList(videoCallStartedEvent)).build();
+    // when
+    RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(testEvent, statisticEventsContainer);
+
+    // then
+    assertThat(result.getUserId(), is(ASKER_ID));
+    assertThat(result.getRegistrationDate(),
+        is("2022-09-15T09:14:45Z"));
+    assertThat(result.getAge(), is(26));
+    assertThat(result.getGender(), is("FEMALE"));
+    assertThat(result.getMainTopicInternalAttribute(),
+        is("alk"));
+    assertThat(result.getTopicsInternalAttributes(),
+        is(List.of("alk", "drogen")));
+    assertThat(result.getPostalCode(), is("12345"));
+    assertThat(result.getCounsellingRelation(),
+        is("SELF_COUNSELLING"));
+    assertThat(result.getTenantName(),
+        is("tenantName"));
+    assertThat(result.getAgencyName(),
+        is("agencyName"));
+    assertThat(result.getReferer(),
+        is("aReferer"));
+  }
+
 
   @Test
   void convertStatisticsEvent_Should_notFail_When_archiveSessionEventsAreNull() {
