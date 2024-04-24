@@ -60,10 +60,12 @@ public class RegistrationStatisticsDTOConverter {
   private long getCountOfEventsPerAdviceSeekerMatchingOnMetadata(String adviceSeekerId,
       Collection<StatisticsEvent> statisticsEvents) {
     return statisticsEvents.stream()
+        .filter(event -> event.getMetaData() instanceof AdviceSeekerAwareMetaData)
         .filter(event -> {
-          AdviceSeekerAwareMetaData metaData = (AdviceSeekerAwareMetaData) event.getMetaData();
-          return metaData.getAdviceSeekerId() != null && metaData.getAdviceSeekerId()
-              .equals(adviceSeekerId);
+            AdviceSeekerAwareMetaData metaData = (AdviceSeekerAwareMetaData) event.getMetaData();
+            return metaData.getAdviceSeekerId() != null && metaData.getAdviceSeekerId()
+                .equals(adviceSeekerId);
+
         })
         .count();
   }
