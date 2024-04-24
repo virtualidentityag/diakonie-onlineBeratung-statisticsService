@@ -52,7 +52,8 @@ class RegistrationStatisticsDTOConverterTest {
     givenValidStatisticEvent(1L);
 
     // when
-    RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(testEvent, new StatisticEventsContainer());
+    RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(
+        testEvent, new StatisticEventsContainer());
 
     // then
     assertThat(result.getUserId(), is(ASKER_ID));
@@ -76,11 +77,11 @@ class RegistrationStatisticsDTOConverterTest {
   }
 
   @Test
-  void convertStatisticsEvent_Should_convertToRegistrationStatisticResponseWithoutErrorIfMetadataIsLinkedHashMap() {
+  void convertStatisticsEvent_Should_convertToRegistrationStatisticResponse_SkipCounting() {
     // given
     givenValidStatisticEvent(1L);
 
-    var videoCallStartedEvent = StatisticsEvent.builder()
+    var eventWithInvalidMetadataType = StatisticsEvent.builder()
         .sessionId(1L)
         .eventType(EventType.REGISTRATION)
         .user(User.builder().userRole(UserRole.ASKER).id(ASKER_ID).build())
@@ -90,9 +91,13 @@ class RegistrationStatisticsDTOConverterTest {
         .metaData(new LinkedHashMap<>())
         .build();
 
-    var statisticEventsContainer = StatisticEventsContainer.builder().videoCallStartedEvents(Lists.newArrayList(videoCallStartedEvent)).build();
+    var statisticEventsContainer = StatisticEventsContainer.builder()
+        .videoCallStartedEvents(Lists.newArrayList(eventWithInvalidMetadataType))
+        .bookingCreatedEvents(Lists.newArrayList(eventWithInvalidMetadataType))
+        .consultantMessageCreatedEvents(Lists.newArrayList(eventWithInvalidMetadataType)).build();
     // when
-    RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(testEvent, statisticEventsContainer);
+    RegistrationStatisticsResponseDTO result = registrationStatisticsDTOConverter.convertStatisticsEvent(
+        testEvent, statisticEventsContainer);
 
     // then
     assertThat(result.getUserId(), is(ASKER_ID));
@@ -220,13 +225,15 @@ class RegistrationStatisticsDTOConverterTest {
   }
 
   private void givenAccountDeleteStatisticEvents() {
-    deleteAccountEvents = List.of(deleteEvent(ASKER_ID, "2022-10-19T10:00:00.00Z", "delete date for user 1"),
+    deleteAccountEvents = List.of(
+        deleteEvent(ASKER_ID, "2022-10-19T10:00:00.00Z", "delete date for user 1"),
         deleteEvent("user 2", "2022-10-17T10:00:00.00Z", "delete date for user 2"));
   }
 
 
   private void givenValidArchiveStatisticEvents() {
-    archiveSessionEvents = List.of(archiveEvent(1L, "2022-10-17T10:00:00.00Z", "1 end date for session 1"),
+    archiveSessionEvents = List.of(
+        archiveEvent(1L, "2022-10-17T10:00:00.00Z", "1 end date for session 1"),
         archiveEvent(1L, "2022-10-18T10:00:00.00Z", "2 end date for session 1"),
         archiveEvent(2L, "2022-10-18T10:00:00.00Z", "end date for session 2"),
         archiveEvent(999L, "2022-10-19T10:00:00.00Z", "dummy end date"));
@@ -234,13 +241,15 @@ class RegistrationStatisticsDTOConverterTest {
 
   private StatisticsEvent archiveEvent(Long sessionId, String timestampString, String endDate) {
     Object metaData = ArchiveMetaData.builder().endDate(endDate).build();
-    return StatisticsEvent.builder().timestamp(Instant.parse(timestampString)).sessionId(sessionId).metaData(metaData).build();
+    return StatisticsEvent.builder().timestamp(Instant.parse(timestampString)).sessionId(sessionId)
+        .metaData(metaData).build();
   }
 
   private StatisticsEvent deleteEvent(String userId, String timestampString, String deleteDate) {
     Object metaData = DeleteAccountMetaData.builder().deleteDate(deleteDate).build();
     User user = new User();
     user.setId(userId);
-    return StatisticsEvent.builder().timestamp(Instant.parse(timestampString)).user(user).metaData(metaData).build();
+    return StatisticsEvent.builder().timestamp(Instant.parse(timestampString)).user(user)
+        .metaData(metaData).build();
   }
 }

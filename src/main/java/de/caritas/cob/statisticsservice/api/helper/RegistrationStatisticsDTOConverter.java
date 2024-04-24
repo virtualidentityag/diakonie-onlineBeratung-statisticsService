@@ -81,6 +81,7 @@ public class RegistrationStatisticsDTOConverter {
   private long getCountOfEventsPerAdviceSeekerMatchingOnMetadataByReceiverId(String adviceSeekerId,
       Collection<StatisticsEvent> createMessageEvents) {
     return createMessageEvents.stream()
+        .filter(event -> event.getMetaData() instanceof CreateMessageMetaData)
         .filter(event -> {
           CreateMessageMetaData metaData = (CreateMessageMetaData) event.getMetaData();
           return metaData.getReceiverId() != null && metaData.getReceiverId()
