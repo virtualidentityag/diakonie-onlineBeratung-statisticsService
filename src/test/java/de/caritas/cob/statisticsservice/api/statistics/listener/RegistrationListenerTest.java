@@ -8,6 +8,7 @@ import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.SESS
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.TENANT_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,6 +73,35 @@ public class RegistrationListenerTest {
         is(buildMetaData(registrationStatisticsEventMessage)));
   }
 
+  @Test
+  public void registration_Should_saveEventWithSessionId_WhenSessionDataNotAvailable() {
+    // given
+    when(userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
+        .thenThrow(new RuntimeException("Session deleted"));
+
+    RegistrationStatisticsEventMessage registrationStatisticsEventMessage = buildEventMessage();
+
+    // when
+    registrationListener.receiveMessage(registrationStatisticsEventMessage);
+
+    // then
+    verify(mongoTemplate).insert(statisticsEventCaptor.capture());
+
+    StatisticsEvent statisticsEvent = statisticsEventCaptor.getValue();
+    assertThat(statisticsEvent.getEventType(),
+        is(registrationStatisticsEventMessage.getEventType()));
+    assertThat(statisticsEvent.getSessionId(), is(SESSION_ID));
+    assertThat(statisticsEvent.getConsultingType(), nullValue());
+    assertThat(statisticsEvent.getAgency(), nullValue());
+    assertThat(statisticsEvent.getTimestamp(),
+        is(registrationStatisticsEventMessage.getTimestamp().toInstant()));
+    assertThat(statisticsEvent.getUser().getId(),
+        is(registrationStatisticsEventMessage.getUserId()));
+    assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.ASKER));
+    assertThat(statisticsEvent.getMetaData(),
+        is(buildMetaData(registrationStatisticsEventMessage)));
+  }
+
   private SessionStatisticsResultDTO buildResultDto() {
     return new SessionStatisticsResultDTO()
         .id(SESSION_ID)
@@ -85,7 +115,7 @@ public class RegistrationListenerTest {
     return new RegistrationStatisticsEventMessage()
         .tenantId(TENANT_ID)
         .sessionId(SESSION_ID)
-        .eventType(EventType.CREATE_MESSAGE)
+        .eventType(EventType.REGISTRATION)
         .userId(ASKER_ID)
         .userRole(UserRole.ASKER)
         .registrationDate("2022-08-15T21:11:29")

@@ -1,6 +1,8 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 /node_modules
+log
+/statisticsservice.tar
 
 ### STS ###
 .apt_generated
@@ -24,6 +26,3 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-wrapper
-log
-/statisticsservice.tar

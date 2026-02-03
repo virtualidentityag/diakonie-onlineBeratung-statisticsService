@@ -39,6 +39,7 @@ public class StartVideoCallListener {
             : StatisticsEventBuilder.getInstance(() -> userStatisticsService.retrieveSessionViaSessionId(sessionId));
 
     var statisticsEvent = statisticsEventBuilder
+            .withSessionId(sessionId)
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().truncatedTo(ChronoUnit.SECONDS).toInstant())
             .withUserId(eventMessage.getUserId())

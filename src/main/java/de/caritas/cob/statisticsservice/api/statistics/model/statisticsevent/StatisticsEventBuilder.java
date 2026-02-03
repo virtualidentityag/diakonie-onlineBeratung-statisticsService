@@ -6,16 +6,22 @@ import de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.mode
 
 import java.time.Instant;
 import java.util.function.Supplier;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
-/** Builder for a {@link StatisticsEvent} instance. */
+/**
+ * Builder for a {@link StatisticsEvent} instance.
+ */
+@Slf4j
 public class StatisticsEventBuilder {
 
   private final Supplier<SessionStatisticsResultDTO> sessionSupplier;
   private EventType eventType;
   private Instant timestamp;
+  private Long sessionId;
   private String userId;
   private UserRole userRole;
   private Object metaData;
@@ -32,7 +38,7 @@ public class StatisticsEventBuilder {
    * Creates the {@link StatisticsEventBuilder} instance.
    *
    * @param sessionSupplier A (@link {@link Supplier} for a {@link SessionStatisticsResultDTO}
-   *     instance
+   *                        instance
    * @return a instance of {@link StatisticsEventBuilder}
    */
   public static StatisticsEventBuilder getInstance(
@@ -42,6 +48,17 @@ public class StatisticsEventBuilder {
 
   public static StatisticsEventBuilder getInstance() {
     return new StatisticsEventBuilder();
+  }
+
+  /**
+   * Sets the session id.
+   *
+   * @param sessionId the session id of the event
+   * @return the current {@link StatisticsEventBuilder}
+   */
+  public StatisticsEventBuilder withSessionId(Long sessionId) {
+    this.sessionId = sessionId;
+    return this;
   }
 
   /**
@@ -110,23 +127,16 @@ public class StatisticsEventBuilder {
     validateAttributes();
 
     var eventBuilder = StatisticsEvent.builder()
-            .eventType(eventType)
-            .timestamp(timestamp)
-            .user(buildUser())
-            .metaData(metaData);
+        .eventType(eventType)
+        .timestamp(timestamp)
+        .user(buildUser())
+        .metaData(metaData);
 
-    if (isNull(sessionSupplier)) {
-      if (eventType != EventType.START_VIDEO_CALL) {
-        throw new IllegalArgumentException("Mandatory session of event type " + eventType + " missing.");
-      }
-    } else {
-      var session = sessionSupplier.get();
-      requireNonNull(session.getId());
-      eventBuilder
-              .sessionId(session.getId())
-              .consultingType(buildConsultingType(session))
-              .agency(buildAgency(session));
+    // We set the sessionId here. Nevertheless, we try to load the session to read Agency and ConsultingType from the session.
+    if (nonNull(sessionId)) {
+      eventBuilder.sessionId(sessionId);
     }
+    tryLoadSessionData(eventBuilder);
 
     return eventBuilder.build();
   }
@@ -159,5 +169,53 @@ public class StatisticsEventBuilder {
         .userRole(userRole)
         .id(this.userId)
         .build();
+  }
+
+  /**
+   * Attempts to load session data from the supplier. If loading fails (e.g., session not found),
+   * logs a warning and continues without session data. This allows processing of events even when
+   * sessions have been deleted.
+   */
+  private void tryLoadSessionData(StatisticsEvent.StatisticsEventBuilder eventBuilder) {
+    if (shouldSkipSessionLoading()) {
+      return;
+    }
+
+    try {
+      assert sessionSupplier != null;
+      var session = sessionSupplier.get();
+
+      if (isNull(session)) {
+        log.warn("Session supplier returned null for event type {}. "
+            + "Continuing without session data.", eventType);
+        return;
+      }
+
+      eventBuilder
+          .sessionId(session.getId())
+          .consultingType(buildConsultingType(session))
+          .agency(buildAgency(session));
+
+    } catch (Exception e) {
+      // Session lookup failed (most likely 404 - session was deleted)
+      // This is expected for old events where sessions have been cleaned up
+      log.info("Failed to load session data for event type {}. "
+              + "Continuing without session data. Reason: {} - {}",
+          eventType,
+          e.getClass().getSimpleName(),
+          e.getMessage());
+    }
+  }
+
+  private boolean shouldSkipSessionLoading() {
+    if (isNull(sessionSupplier)) {
+      if (eventType != EventType.START_VIDEO_CALL) {
+        throw new IllegalArgumentException(
+            "Mandatory session of event type " + eventType + " missing.");
+      }
+      // For START_VIDEO_CALL this is expected - no warning needed
+      return true;
+    }
+    return false;
   }
 }
