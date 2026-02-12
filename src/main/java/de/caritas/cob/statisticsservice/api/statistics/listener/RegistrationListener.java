@@ -1,8 +1,9 @@
 package de.caritas.cob.statisticsservice.api.statistics.listener;
 
+import static java.util.Objects.isNull;
+
 import de.caritas.cob.statisticsservice.api.model.RegistrationStatisticsEventMessage;
 import de.caritas.cob.statisticsservice.api.service.UserStatisticsService;
-import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEvent;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.StatisticsEventBuilder;
 import de.caritas.cob.statisticsservice.api.statistics.model.statisticsevent.meta.RegistrationMetaData;
 import lombok.NonNull;
@@ -30,19 +31,21 @@ public class RegistrationListener {
       id = "registration-event-listener",
       queues = "#{rabbitMqConfig.QUEUE_NAME_REGISTRATION}",
       containerFactory = "simpleRabbitListenerContainerFactory")
+  @SuppressWarnings({"NullAway", "java:S2583"}) // sessionId can be null despite @NonNull annotation
   public void receiveMessage(RegistrationStatisticsEventMessage eventMessage) {
+    var sessionId = eventMessage.getSessionId();
+    var statisticsEventBuilder = isNull(sessionId)
+        ? StatisticsEventBuilder.getInstance()
+        : StatisticsEventBuilder.getInstance(() -> userStatisticsService.retrieveSessionViaSessionId(sessionId));
 
-    StatisticsEvent statisticsEvent =
-        StatisticsEventBuilder.getInstance(
-            () ->
-                userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
-            .withSessionId(eventMessage.getSessionId())
-            .withEventType(eventMessage.getEventType())
-            .withTimestamp(eventMessage.getTimestamp().toInstant())
-            .withUserId(eventMessage.getUserId())
-            .withUserRole(eventMessage.getUserRole())
-            .withMetaData(buildMetaData(eventMessage))
-            .build();
+    var statisticsEvent = statisticsEventBuilder
+        .withSessionId(eventMessage.getSessionId())
+        .withEventType(eventMessage.getEventType())
+        .withTimestamp(eventMessage.getTimestamp().toInstant())
+        .withUserId(eventMessage.getUserId())
+        .withUserRole(eventMessage.getUserRole())
+        .withMetaData(buildMetaData(eventMessage))
+        .build();
 
     mongoTemplate.insert(statisticsEvent);
   }

@@ -208,14 +208,6 @@ public class StatisticsEventBuilder {
   }
 
   private boolean shouldSkipSessionLoading() {
-    if (isNull(sessionSupplier)) {
-      if (eventType != EventType.START_VIDEO_CALL) {
-        throw new IllegalArgumentException(
-            "Mandatory session of event type " + eventType + " missing.");
-      }
-      // For START_VIDEO_CALL this is expected - no warning needed
-      return true;
-    }
-    return false;
+    return isNull(sessionSupplier);
   }
 }

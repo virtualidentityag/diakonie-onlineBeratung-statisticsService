@@ -30,8 +30,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsEventBuilderTest {
 
-  @Mock
-  UserStatisticsService userStatisticsService;
+  @Mock UserStatisticsService userStatisticsService;
 
   @Test(expected = NullPointerException.class)
   public void build_Should_ThrowNullPointerException_WhenEventTypeIsNull() {
@@ -141,40 +140,33 @@ public class StatisticsEventBuilderTest {
   }
 
   @Test
-  public void buildShouldNotRequestSessionFromUserServiceOnStartVideoCallEvent() {
-    Instant now = Instant.now();
+  public void build_Should_BuildWithoutSessionData_WhenNoSupplierProvided() {
+    // given
+    Instant timestamp = Instant.now();
     Object metaData = buildMetaData();
 
-    var result = StatisticsEventBuilder.getInstance()
+    // when
+    StatisticsEvent result = StatisticsEventBuilder.getInstance()
         .withEventType(EventType.START_VIDEO_CALL)
-        .withTimestamp(now)
+        .withTimestamp(timestamp)
         .withUserId(CONSULTANT_ID)
         .withUserRole(UserRole.CONSULTANT)
         .withMetaData(metaData)
         .build();
 
+    // then
     assertThat(result.getEventType(), is(EventType.START_VIDEO_CALL));
-    assertThat(result.getTimestamp(), is(now));
+    assertThat(result.getTimestamp(), is(timestamp));
     assertThat(result.getMetaData(), notNullValue());
     assertThat(result.getMetaData(), is(metaData));
     assertThat(result.getUser(), notNullValue());
     assertThat(result.getUser().getId(), is(CONSULTANT_ID));
     assertThat(result.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(result.getSessionId(), nullValue());
     assertThat(result.getAgency(), nullValue());
     assertThat(result.getConsultingType(), nullValue());
 
     verifyNoInteractions(userStatisticsService);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void buildShouldIllegalArgExceptionOnMissingSessionAndNotStartVideoCallEvent() {
-    StatisticsEventBuilder.getInstance()
-        .withEventType(EventType.ASSIGN_SESSION)
-        .withTimestamp(Instant.now())
-        .withUserId(CONSULTANT_ID)
-        .withUserRole(UserRole.CONSULTANT)
-        .withMetaData(new Object())
-        .build();
   }
 
   @Test
