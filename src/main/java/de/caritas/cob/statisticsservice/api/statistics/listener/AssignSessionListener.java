@@ -40,6 +40,7 @@ public class AssignSessionListener {
         StatisticsEventBuilder.getInstance(
             () ->
                 userStatisticsService.retrieveSessionViaSessionId(eventMessage.getSessionId()))
+            .withSessionId(eventMessage.getSessionId())
             .withEventType(eventMessage.getEventType())
             .withTimestamp(eventMessage.getTimestamp().toInstant())
             .withUserId(eventMessage.getUserId())

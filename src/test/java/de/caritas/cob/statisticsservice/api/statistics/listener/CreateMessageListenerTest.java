@@ -7,6 +7,7 @@ import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.RC_G
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.SESSION_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +59,31 @@ public class CreateMessageListenerTest {
     assertThat(statisticsEvent.getSessionId(), is(sessionStatisticsResultDTO.getId()));
     assertThat(statisticsEvent.getConsultingType().getId(), is(sessionStatisticsResultDTO.getConsultingType()));
     assertThat(statisticsEvent.getAgency().getId(), is(sessionStatisticsResultDTO.getAgencyId()));
+    assertThat(statisticsEvent.getTimestamp(), is(createMessageStatisticsEventMessage.getTimestamp().toInstant()));
+    assertThat(statisticsEvent.getUser().getId(), is(createMessageStatisticsEventMessage.getUserId()));
+    assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(statisticsEvent.getMetaData(), is(buildMetaData(createMessageStatisticsEventMessage)));
+  }
+
+  @Test
+  public void receiveMessage_Should_saveEventWithoutSessionData_WhenSessionDataNotAvailable() {
+    // given
+    when(userStatisticsService.retrieveSessionViaRcGroupId(RC_GROUP_ID))
+        .thenThrow(new RuntimeException("Session not found"));
+
+    CreateMessageStatisticsEventMessage createMessageStatisticsEventMessage = buildEventMessage();
+
+    // when
+    createMessageListener.receiveMessage(createMessageStatisticsEventMessage);
+
+    // then
+    verify(mongoTemplate).insert(statisticsEventCaptor.capture());
+
+    StatisticsEvent statisticsEvent = statisticsEventCaptor.getValue();
+    assertThat(statisticsEvent.getEventType(), is(createMessageStatisticsEventMessage.getEventType()));
+    assertThat(statisticsEvent.getSessionId(), nullValue());
+    assertThat(statisticsEvent.getConsultingType(), nullValue());
+    assertThat(statisticsEvent.getAgency(), nullValue());
     assertThat(statisticsEvent.getTimestamp(), is(createMessageStatisticsEventMessage.getTimestamp().toInstant()));
     assertThat(statisticsEvent.getUser().getId(), is(createMessageStatisticsEventMessage.getUserId()));
     assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.CONSULTANT));
