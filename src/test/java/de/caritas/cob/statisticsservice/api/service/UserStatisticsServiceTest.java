@@ -1,6 +1,5 @@
 package de.caritas.cob.statisticsservice.api.service;
 
-
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.RC_GROUP_ID;
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.SESSION_ID;
 import static org.mockito.Mockito.times;
@@ -9,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import de.caritas.cob.statisticsservice.api.service.securityheader.SecurityHeaderSupplier;
 import de.caritas.cob.statisticsservice.api.service.securityheader.TenantHeaderSupplier;
+import de.caritas.cob.statisticsservice.config.apiclient.UserStatisticsApiControllerFactory;
+import de.caritas.cob.statisticsservice.userstatisticsservice.generated.ApiClient;
 import de.caritas.cob.statisticsservice.userstatisticsservice.generated.web.UserStatisticsControllerApi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,31 +23,47 @@ public class UserStatisticsServiceTest {
 
   @InjectMocks
   UserStatisticsService userStatisticsService;
+
+  @Mock
+  UserStatisticsApiControllerFactory userStatisticsApiControllerFactory;
+
   @Mock
   UserStatisticsControllerApi userStatisticsControllerApi;
+
+  @Mock
+  ApiClient apiClient;
+
   @Mock
   SecurityHeaderSupplier securityHeaderSupplier;
+
   @Mock
   TenantHeaderSupplier tenantHeaderSupplier;
 
   @Test
   public void retrieveSessionViaRcGroupId_Should_RetrieveSessionViaUserStatisticsControllerApi() {
-
     var headers = new HttpHeaders();
     when(securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
+    when(userStatisticsApiControllerFactory.createControllerApi()).thenReturn(userStatisticsControllerApi);
+    when(userStatisticsControllerApi.getApiClient()).thenReturn(apiClient);
+
     userStatisticsService.retrieveSessionViaRcGroupId(RC_GROUP_ID);
+
+    verify(userStatisticsApiControllerFactory, times(1)).createControllerApi();
     verify(userStatisticsControllerApi, times(1)).getSession(null, RC_GROUP_ID);
     verify(tenantHeaderSupplier).addTechnicalTenantHeaderIfMultitenancyEnabled(headers);
   }
 
   @Test
   public void retrieveSessionViaSessionId_Should_RetrieveSessionViaUserStatisticsControllerApi() {
-
     var headers = new HttpHeaders();
     when(securityHeaderSupplier.getCsrfHttpHeaders()).thenReturn(headers);
+    when(userStatisticsApiControllerFactory.createControllerApi()).thenReturn(userStatisticsControllerApi);
+    when(userStatisticsControllerApi.getApiClient()).thenReturn(apiClient);
+
     userStatisticsService.retrieveSessionViaSessionId(SESSION_ID);
+
+    verify(userStatisticsApiControllerFactory, times(1)).createControllerApi();
     verify(userStatisticsControllerApi, times(1)).getSession(SESSION_ID, null);
     verify(tenantHeaderSupplier, times(1)).addTechnicalTenantHeaderIfMultitenancyEnabled(headers);
   }
-
 }

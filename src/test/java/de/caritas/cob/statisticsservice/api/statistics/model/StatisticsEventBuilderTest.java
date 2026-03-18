@@ -84,26 +84,6 @@ public class StatisticsEventBuilderTest {
         .build();
   }
 
-  @Test(expected = NullPointerException.class)
-  public void build_Should_ThrowNullPointerException_WhenRetrievedSessionHasNoId() {
-
-    SessionStatisticsResultDTO session = buildSessionStatisticsResultDto();
-    session.id(null);
-
-    when(userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
-        .thenReturn(session);
-
-    StatisticsEventBuilder builder =
-        StatisticsEventBuilder.getInstance(
-            () -> userStatisticsService.retrieveSessionViaSessionId(SESSION_ID));
-    builder
-        .withEventType(EventType.ASSIGN_SESSION)
-        .withTimestamp(Instant.now())
-        .withUserId(CONSULTANT_ID)
-        .withUserRole(UserRole.CONSULTANT)
-        .build();
-  }
-
   @Test
   public void build_Should_Build_ValidStatisticEventsModel() {
 
@@ -160,40 +140,93 @@ public class StatisticsEventBuilderTest {
   }
 
   @Test
-  public void buildShouldNotRequestSessionFromUserServiceOnStartVideoCallEvent() {
-    Instant now = Instant.now();
+  public void build_Should_BuildWithoutSessionData_WhenNoSupplierProvided() {
+    // given
+    Instant timestamp = Instant.now();
     Object metaData = buildMetaData();
 
-    var result = StatisticsEventBuilder.getInstance()
-            .withEventType(EventType.START_VIDEO_CALL)
-            .withTimestamp(now)
-            .withUserId(CONSULTANT_ID)
-            .withUserRole(UserRole.CONSULTANT)
-            .withMetaData(metaData)
-            .build();
+    // when
+    StatisticsEvent result = StatisticsEventBuilder.getInstance()
+        .withEventType(EventType.START_VIDEO_CALL)
+        .withTimestamp(timestamp)
+        .withUserId(CONSULTANT_ID)
+        .withUserRole(UserRole.CONSULTANT)
+        .withMetaData(metaData)
+        .build();
 
+    // then
     assertThat(result.getEventType(), is(EventType.START_VIDEO_CALL));
-    assertThat(result.getTimestamp(), is(now));
+    assertThat(result.getTimestamp(), is(timestamp));
     assertThat(result.getMetaData(), notNullValue());
     assertThat(result.getMetaData(), is(metaData));
     assertThat(result.getUser(), notNullValue());
     assertThat(result.getUser().getId(), is(CONSULTANT_ID));
     assertThat(result.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(result.getSessionId(), nullValue());
     assertThat(result.getAgency(), nullValue());
     assertThat(result.getConsultingType(), nullValue());
 
     verifyNoInteractions(userStatisticsService);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void buildShouldIllegalArgExceptionOnMissingSessionAndNotStartVideoCallEvent() {
-    StatisticsEventBuilder.getInstance()
-            .withEventType(EventType.ASSIGN_SESSION)
-            .withTimestamp(Instant.now())
-            .withUserId(CONSULTANT_ID)
-            .withUserRole(UserRole.CONSULTANT)
-            .withMetaData(new Object())
-            .build();
+  @Test
+  public void build_Should_SetSessionIdEvenWhenSessionDataLoadingFails() {
+    // given
+    when(userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
+        .thenThrow(new RuntimeException("Session not found"));
+
+    Instant timestamp = Instant.now();
+    Object metaData = buildMetaData();
+
+    // when
+    StatisticsEvent result = StatisticsEventBuilder.getInstance(
+        () -> userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
+        .withSessionId(SESSION_ID)
+        .withEventType(EventType.ARCHIVE_SESSION)
+        .withTimestamp(timestamp)
+        .withUserId(CONSULTANT_ID)
+        .withUserRole(UserRole.CONSULTANT)
+        .withMetaData(metaData)
+        .build();
+
+    // then
+    assertThat(result.getSessionId(), is(SESSION_ID));
+    assertThat(result.getEventType(), is(EventType.ARCHIVE_SESSION));
+    assertThat(result.getTimestamp(), is(timestamp));
+    assertThat(result.getUser().getId(), is(CONSULTANT_ID));
+    assertThat(result.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(result.getMetaData(), is(metaData));
+    assertThat(result.getAgency(), nullValue());
+    assertThat(result.getConsultingType(), nullValue());
+  }
+
+  @Test
+  public void build_Should_SetSessionIdWithNullSupplierButExplicitSessionId() {
+    // given
+    Instant timestamp = Instant.now();
+    Object metaData = buildMetaData();
+
+    // when
+    StatisticsEvent result = StatisticsEventBuilder.getInstance()
+        .withSessionId(SESSION_ID)
+        .withEventType(EventType.START_VIDEO_CALL)
+        .withTimestamp(timestamp)
+        .withUserId(CONSULTANT_ID)
+        .withUserRole(UserRole.CONSULTANT)
+        .withMetaData(metaData)
+        .build();
+
+    // then
+    assertThat(result.getSessionId(), is(SESSION_ID));
+    assertThat(result.getEventType(), is(EventType.START_VIDEO_CALL));
+    assertThat(result.getTimestamp(), is(timestamp));
+    assertThat(result.getUser().getId(), is(CONSULTANT_ID));
+    assertThat(result.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(result.getMetaData(), is(metaData));
+    assertThat(result.getAgency(), nullValue());
+    assertThat(result.getConsultingType(), nullValue());
+
+    verifyNoInteractions(userStatisticsService);
   }
 
   private SessionStatisticsResultDTO buildSessionStatisticsResultDto() {

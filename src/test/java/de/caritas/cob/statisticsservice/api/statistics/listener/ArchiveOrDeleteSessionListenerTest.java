@@ -8,6 +8,7 @@ import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.SESS
 import static de.caritas.cob.statisticsservice.api.testhelper.TestConstants.TENANT_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +62,32 @@ public class ArchiveOrDeleteSessionListenerTest {
     assertThat(statisticsEvent.getSessionId(), is(SESSION_ID));
     assertThat(statisticsEvent.getConsultingType().getId(), is(CONSULTING_TYPE_ID));
     assertThat(statisticsEvent.getAgency().getId(), is(AGENCY_ID));
+    assertThat(statisticsEvent.getTimestamp(), is(timestamp.toInstant()));
+    assertThat(statisticsEvent.getUser().getId(), is(CONSULTANT_ID));
+    assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(statisticsEvent.getMetaData(), is(buildMetaData()));
+  }
+
+  @Test
+  public void receiveMessage_Should_saveEventWithSessionId_WhenSessionDataNotAvailable() {
+    // given
+    when(userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
+        .thenThrow(new RuntimeException("Session deleted"));
+
+    OffsetDateTime timestamp = OffsetDateTime.now();
+    ArchiveOrDeleteSessionStatisticsEventMessage archiveSessionStatisticsEventMessage = buildEventMessage(timestamp);
+
+    // when
+    archiveSessionListener.receiveMessage(archiveSessionStatisticsEventMessage);
+
+    // then
+    verify(mongoTemplate).insert(statisticsEventCaptor.capture());
+
+    StatisticsEvent statisticsEvent = statisticsEventCaptor.getValue();
+    assertThat(statisticsEvent.getEventType(), is(EventType.ARCHIVE_SESSION));
+    assertThat(statisticsEvent.getSessionId(), is(SESSION_ID));
+    assertThat(statisticsEvent.getConsultingType(), nullValue());
+    assertThat(statisticsEvent.getAgency(), nullValue());
     assertThat(statisticsEvent.getTimestamp(), is(timestamp.toInstant()));
     assertThat(statisticsEvent.getUser().getId(), is(CONSULTANT_ID));
     assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.CONSULTANT));
