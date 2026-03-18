@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.2](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/compare/v1.12.1...v1.12.2) (2026-03-18)
+
+
+### Bug Fixes
+
+* The sessionSupplier in StatisticsEventBuilder can be null. ([e9d2512](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/commit/e9d2512f4dc3d7d7ef4effcfa4cdaef6dd560d3d))
+* Unfortunately, MQ Liseners are dependent on the session in the database. The session is loaded and enriched with Agency Id and ConsultingType. However, there were cases where MQ events were processed late, the session had already been deleted, and the event was not processed (dead letter). ([ce1621e](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/commit/ce1621ed51a40744e644ef7c804b11a6894fb539))
+
 ### [1.12.1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/compare/v1.12.0...v1.12.1) (2025-10-31)
 
 
