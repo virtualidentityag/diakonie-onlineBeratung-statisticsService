@@ -104,6 +104,34 @@ public class StartVideoCallListenerTest {
     assertThat(statisticsEvent.getMetaData(), is(buildMetaData(startVideoCallStatisticsEventMessage)));
   }
 
+  @Test
+  public void receiveMessage_Should_saveEventWithSessionId_WhenSessionDataNotAvailable() {
+    // given
+    when(userStatisticsService.retrieveSessionViaSessionId(SESSION_ID))
+        .thenThrow(new RuntimeException("Session deleted"));
+
+    StartVideoCallStatisticsEventMessage startVideoCallStatisticsEventMessage = buildEventMessageWithSession();
+
+    // when
+    startVideoCallListener.receiveMessage(startVideoCallStatisticsEventMessage);
+
+    // then
+    verify(mongoTemplate).insert(statisticsEventCaptor.capture());
+
+    StatisticsEvent statisticsEvent = statisticsEventCaptor.getValue();
+    assertThat(statisticsEvent.getEventType(), is(startVideoCallStatisticsEventMessage.getEventType()));
+    assertThat(statisticsEvent.getSessionId(), is(SESSION_ID));
+    assertThat(statisticsEvent.getConsultingType(), is(nullValue()));
+    assertThat(statisticsEvent.getAgency(), is(nullValue()));
+    assertThat(
+        statisticsEvent.getTimestamp(),
+        is(startVideoCallStatisticsEventMessage.getTimestamp().truncatedTo(ChronoUnit.SECONDS).toInstant())
+    );
+    assertThat(statisticsEvent.getUser().getId(), is(startVideoCallStatisticsEventMessage.getUserId()));
+    assertThat(statisticsEvent.getUser().getUserRole(), is(UserRole.CONSULTANT));
+    assertThat(statisticsEvent.getMetaData(), is(buildMetaData(startVideoCallStatisticsEventMessage)));
+  }
+
   private SessionStatisticsResultDTO buildResultDto() {
     return new SessionStatisticsResultDTO()
         .id(SESSION_ID)
@@ -116,7 +144,7 @@ public class StartVideoCallListenerTest {
   private StartVideoCallStatisticsEventMessage buildEventMessageWithSession() {
     return new StartVideoCallStatisticsEventMessage()
         .sessionId(SESSION_ID)
-        .eventType(EventType.CREATE_MESSAGE)
+        .eventType(EventType.START_VIDEO_CALL)
         .userId(CONSULTANT_ID)
         .userRole(UserRole.CONSULTANT)
         .timestamp(OffsetDateTime.now())
