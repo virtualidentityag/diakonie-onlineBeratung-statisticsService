@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.3](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/compare/v1.12.2...v1.12.3) (2026-10-23)
+
+
+### Bug Fixes
+
+* update base image to eclipse-temurin:11-jdk-jammy ([f6e1e1d](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/commit/f6e1e1dbffc369483b8c2ba30d8582cc7117a8de))
+
 ### [1.12.2](https://github.com/CaritasDeutschland/caritas-onlineBeratung-statisticsService/compare/v1.12.1...v1.12.2) (2026-03-18)
 
 
